@@ -12,3 +12,4 @@
 1. To run mysql server use command - `docker-compose up -d`
 2. To stop the server use command - `docker-compose down`
 3. Server Details are available in `docker-compose.yml` which include passwords and user and database schema
+4. To connect to the database use client like DBWeaver
