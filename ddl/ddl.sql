@@ -131,7 +131,7 @@ CREATE TABLE dsr_vehicle_class (
 ALTER TABLE dsr_coupon ADD CONSTRAINT chk_discount CHECK (discount <= 100);
 ALTER TABLE dsr_coupon_indiv ADD CONSTRAINT chk_date CHECK (valid_to >= valid_from);
 ALTER TABLE dsr_rental_service ADD CONSTRAINT chk_odo CHECK (end_odo >= start_odo);
-ALTER TABLE dsr_rental_service ADD CONSTRAINT chk_date CHECK (dropoff_date >= pickup_date);
+ALTER TABLE dsr_rental_service ADD CONSTRAINT chk_service_date CHECK (dropoff_date >= pickup_date);
 
 ALTER TABLE dsr_customer ADD CONSTRAINT ch_inh_dsr_customer CHECK ( customer_type IN ( 'C', 'I' ) );
 ALTER TABLE dsr_coupon ADD CONSTRAINT ch_inh_dsr_coupon CHECK ( coupon_type IN ( 'C', 'I' ) );
