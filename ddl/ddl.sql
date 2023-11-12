@@ -6,15 +6,15 @@ CREATE TABLE dsr_corporation (
 
 
 CREATE TABLE dsr_coupon (
-    coupon_id   BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    coupon_id   BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for every coupon',
     coupon_type VARCHAR(1) NOT NULL COMMENT 'Type of Coupon - Individual (I) or Corporate(C)',
     discount    DECIMAL(5, 2) NOT NULL COMMENT 'Discount available'
 );
 
 
 CREATE TABLE dsr_coupon_corp (
-    coupon_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    corp_id   BIGINT NOT NULL
+    coupon_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Coupon ID',
+    corp_id   BIGINT NOT NULL COMMENT 'Corporation ID for the coupon'
 );
 
 
@@ -27,7 +27,7 @@ CREATE TABLE dsr_coupon_indiv (
 
 CREATE TABLE dsr_cust_corporate (
     customer_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for every customer.',
-    corp_id     BIGINT NOT NULL,
+    corp_id     BIGINT NOT NULL COMMENT 'Corporation ID for the Employee',
     emp_id      VARCHAR(10) NOT NULL COMMENT 'Employee ID for the corporate'
 );
 
@@ -55,8 +55,8 @@ CREATE TABLE dsr_customer (
 
 
 CREATE TABLE dsr_invc_payment (
-    payment_id BIGINT NOT NULL,
-    invoice_id BIGINT NOT NULL,
+    payment_id BIGINT NOT NULL COMMENT 'Payment ID used for transaction payment',
+    invoice_id BIGINT NOT NULL COMMENT 'Invoice ID for the transaction payment',
     amount DECIMAL(9, 2) NOT NULL COMMENT 'Amount paid for that transaction',
     PRIMARY KEY (payment_id, invoice_id)
 );
@@ -64,7 +64,7 @@ CREATE TABLE dsr_invc_payment (
 
 CREATE TABLE dsr_invoice (
     invoice_id     BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for an invoice.',
-    service_id     BIGINT NOT NULL,
+    service_id     BIGINT NOT NULL COMMENT 'Service ID for the generated invoice',
     invoice_date   DATETIME NOT NULL COMMENT 'Date on which the invoice was generated.',
     invoice_amount DECIMAL(10, 2) NOT NULL COMMENT 'Final Calculate Amount for rental service.'
 );
@@ -83,7 +83,7 @@ CREATE TABLE dsr_office_location (
 
 CREATE TABLE dsr_payment (
     payment_id  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for every payment.',
-    customer_id BIGINT NOT NULL,
+    customer_id BIGINT NOT NULL COMMENT 'Customer ID for the payment option',
     pay_method  ENUM('DEBIT', 'CREDIT', 'GIFT') NOT NULL COMMENT 'Payment method - Card(Debit/Credit) or Gift Card',
     card_no     VARCHAR(30) NOT NULL COMMENT 'Card Number used for Credit/Debit Card transactions.',
     pay_date    DATETIME NOT NULL COMMENT 'Date of the payment.'
@@ -92,8 +92,8 @@ CREATE TABLE dsr_payment (
 
 CREATE TABLE dsr_rental_service (
     service_id          BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for every service operation.',
-    customer_id         BIGINT NOT NULL,
-    vehicle_id          BIGINT NOT NULL,
+    customer_id         BIGINT NOT NULL COMMENT 'Customer ID for the rental service',
+    vehicle_id          BIGINT NOT NULL COMMENT 'Vehicle used for the rental service',
     pickup_date         DATETIME NOT NULL COMMENT 'Pickup Date for the service.',
     pickup_location_id  BIGINT NOT NULL COMMENT 'Pickup Office Location',
     dropoff_date        DATETIME COMMENT 'Drop off Date for the service.',
@@ -109,8 +109,8 @@ CREATE TABLE dsr_rental_service (
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 CREATE TABLE dsr_vehicle (
     vehicle_id        BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for vehicle(s).',
-    location_id       BIGINT NOT NULL,
-    class_id          BIGINT NOT NULL,
+    location_id       BIGINT NOT NULL COMMENT 'Location ID for that vehicle.',
+    class_id          BIGINT NOT NULL COMMENT 'Class ID for that vehicle.',
     make              VARCHAR(50) NOT NULL COMMENT 'Make of the vehicle.',
     model             VARCHAR(60) NOT NULL COMMENT 'Model description of the vehicle.',
     make_year         DATETIME NOT NULL COMMENT 'Year in which the model was made.',
