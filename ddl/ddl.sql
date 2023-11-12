@@ -169,6 +169,8 @@ DROP TRIGGER IF EXISTS before_insert_dsr_customer;
 DROP TRIGGER IF EXISTS before_update_dsr_customer;
 DROP TRIGGER IF EXISTS chk_individual_coupon_valid;
 DROP TRIGGER IF EXISTS after_rental_service_update;
+DROP TRIGGER IF EXISTS check_payment_customer;
+DROP TRIGGER IF EXISTS check_pending_rental;
 
 
 DELIMITER //
@@ -412,4 +414,26 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Payment does not belong to the customer of the corresponding invoice';
     END IF;
-END //
+END
+//
+
+-- Trigger to check for existing pending rental service for the same vehicle
+CREATE TRIGGER check_pending_rental
+BEFORE INSERT ON dsr_rental_service
+FOR EACH ROW
+BEGIN
+    DECLARE existing_count INT;
+
+    -- Check for existing pending (P) rental services with the same vehicle ID
+    SELECT COUNT(*)
+    INTO existing_count
+    FROM dsr_rental_service
+    WHERE vehicle_id = NEW.vehicle_id AND service_status = 'P';
+
+    -- If there is an existing pending rental service, throw an error
+    IF existing_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Another pending rental service for the same vehicle already exists.';
+    END IF;
+END;
+//
