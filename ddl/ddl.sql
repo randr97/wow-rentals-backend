@@ -102,7 +102,7 @@ CREATE TABLE dsr_rental_service (
     end_odo             DECIMAL(9, 2) COMMENT 'Recorded odometer reading at the end of the trip.',
     daily_limit         DECIMAL(9, 2) COMMENT 'Daily limit for the service.',
     service_status      VARCHAR(1) NOT NULL COMMENT 'Status for the service - Either Completed(C) or Pending(P)',
-    coupon_id           BIGINT
+    coupon_id           BIGINT COMMENT 'Coupon ID used for the rental service'
 );
 
 
