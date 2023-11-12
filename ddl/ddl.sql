@@ -389,3 +389,27 @@ BEGIN
     END IF;
 END
 //
+
+CREATE TRIGGER check_payment_customer
+BEFORE INSERT ON dsr_invc_payment
+FOR EACH ROW
+BEGIN
+    DECLARE customer_id_invoice BIGINT;
+    DECLARE customer_id_payment BIGINT;
+
+    -- Get the customer ID for the invoice being paid
+    SELECT customer_id INTO customer_id_invoice
+    FROM dsr_rental_service
+    WHERE service_id = (SELECT service_id FROM dsr_invoice WHERE invoice_id = NEW.invoice_id);
+
+    -- Get the customer ID for the payment
+    SELECT customer_id INTO customer_id_payment
+    FROM dsr_payment
+    WHERE payment_id = NEW.payment_id;
+
+    -- Check if the customer IDs match
+    IF customer_id_invoice != customer_id_payment THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Payment does not belong to the customer of the corresponding invoice';
+    END IF;
+END //
