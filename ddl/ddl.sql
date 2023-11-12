@@ -8,7 +8,7 @@ CREATE TABLE dsr_corporation (
 CREATE TABLE dsr_coupon (
     coupon_id   BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     coupon_type VARCHAR(1) NOT NULL COMMENT 'Type of Coupon - Individual (I) or Corporate(C)',
-    discount    DECIMAL(5, 2) NOT NULL COMMENT 'Discount available' CHECK (discount <= 100)
+    discount    DECIMAL(5, 2) NOT NULL COMMENT 'Discount available'
 );
 
 
@@ -21,8 +21,7 @@ CREATE TABLE dsr_coupon_corp (
 CREATE TABLE dsr_coupon_indiv (
     coupon_id  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     valid_from DATETIME NOT NULL COMMENT 'Coupon Valid From Date',
-    valid_to   DATETIME NOT NULL COMMENT 'Coupon Valid To Date',
-    CHECK (valid_to >= valid_from)
+    valid_to   DATETIME NOT NULL COMMENT 'Coupon Valid To Date'
 );
 
 
@@ -103,9 +102,7 @@ CREATE TABLE dsr_rental_service (
     end_odo             DECIMAL(9, 2) COMMENT 'Recorded odometer reading at the end of the trip.',
     daily_limit         DECIMAL(9, 2) COMMENT 'Daily limit for the service.',
     service_status      VARCHAR(1) NOT NULL COMMENT 'Status for the service - Either Completed(C) or Pending(P)',
-    coupon_id           BIGINT,
-    CONSTRAINT chk_odo CHECK (end_odo >= start_odo),
-    CONSTRAINT chk_date CHECK (dropoff_date >= pickup_date)
+    coupon_id           BIGINT
 );
 
 
@@ -131,6 +128,11 @@ CREATE TABLE dsr_vehicle_class (
 );
 
 -- CONSTRAINTS
+ALTER TABLE dsr_coupon ADD CONSTRAINT chk_discount CHECK (discount <= 100);
+ALTER TABLE dsr_coupon_indiv ADD CONSTRAINT chk_date CHECK (valid_to >= valid_from);
+ALTER TABLE dsr_rental_service ADD CONSTRAINT chk_odo CHECK (end_odo >= start_odo);
+ALTER TABLE dsr_rental_service ADD CONSTRAINT chk_date CHECK (dropoff_date >= pickup_date);
+
 ALTER TABLE dsr_customer ADD CONSTRAINT ch_inh_dsr_customer CHECK ( customer_type IN ( 'C', 'I' ) );
 ALTER TABLE dsr_coupon ADD CONSTRAINT ch_inh_dsr_coupon CHECK ( coupon_type IN ( 'C', 'I' ) );
 ALTER TABLE dsr_rental_service ADD CONSTRAINT chk_service_status CHECK ( service_status IN ('P', 'C') );
