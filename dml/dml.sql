@@ -1,5 +1,4 @@
-INSERT INTO dsr_customer (customer_type, first_name, last_name, email, phone, address_street, address_city, address_state, address_zipcode)
-VALUES
+INSERT INTO dsr_customer (customer_type, first_name, last_name, email, phone, address_street, address_city, address_state, address_zipcode) VALUES
 ('I', 'John', 'Doe', 'john.doe@example.com', '555-1234', '123 Main St', 'Anytown', 'CA', '12345'),
 ('I', 'Alice', 'Smith', 'alice.smith@example.com', '555-9876', '789 Oak St', 'Nowhere', 'TX', '98765'),
 ('I', 'Eva', 'Miller', 'eva.miller@example.com', '555-1357', '987 Maple St', 'Nowhere', 'TX', '75309'),
@@ -7,21 +6,47 @@ VALUES
 ('I', 'Grace', 'Taylor', 'grace.taylor@example.com', '555-9876', '963 Oak St', 'Nowhere', 'TX', '15973'),
 ('I', 'David', 'Jones', 'david.jones@example.com', '555-8642', '147 Walnut St', 'Anytown', 'CA', '25836'),
 ('I', 'Sophie', 'White', 'sophie.white@example.com', '555-8790', '582 Cedar St', 'Nowhere', 'TX', '47102'),
-('I', 'Michael', 'Clark', 'michael.clark@example.com', '555-4321', '916 Pine St', 'Anytown', 'CA', '79358'),
-('I', 'Emma', 'Johnson', 'emma.johnson@example.com', '555-2468', '361 Elm St', 'Nowhere', 'TX', '11543'),
-('I', 'Bob', 'Johnson', 'bob.johnson@example.com', '555-2468', '321 Elm St', 'Anytown', 'CA', '13579'),
-('I', 'Andrew', 'Taylor', 'andrew.taylor@example.com', '555-1357', '605 Maple St', 'Anytown', 'CA', '33756'),
-('C', 'XYZ Corp', 'Ltd.', 'contact@xyzcorp.com', '555-4321', '101 Pine St', 'Everytown', 'FL', '43210'),
-('C', 'ABC Company', 'Inc.', 'info@abccompany.com', '555-5678', '456 Market St', 'Somewhereville', 'NY', '56789'),
-('C', 'EFG Enterprises', 'LLC', 'info@efgenterprises.com', '555-8642', '654 Walnut St', 'Somewhereville', 'NY', '24680'),
-('C', 'LMN Co.', 'Corp.', 'contact@lmnco.com', '555-8790', '369 Cedar St', 'Everytown', 'FL', '80246'),
-('C', 'PQR Ltd.', 'Company', 'info@pqrcompany.com', '555-4321', '852 Pine St', 'Somewhereville', 'NY', '35791'),
-('C', 'UVW Corporation', 'Inc.', 'contact@uvwcorp.com', '555-2468', '753 Elm St', 'Everytown', 'FL', '46802'),
-('C', 'RST Enterprises', 'LLC', 'info@rstenterprises.com', '555-1357', '369 Maple St', 'Somewhereville', 'NY', '36985'),
-('C', 'JKL Co.', 'Corp.', 'contact@jklco.com', '555-5678', '794 Birch St', 'Everytown', 'FL', '68294'),
-('C', 'GHI Ltd.', 'Company', 'info@ghiltd.com', '555-9876', '239 Oak St', 'Somewhereville', 'NY', '90417'),
-('C', 'NOP Corporation', 'Inc.', 'contact@nopcorp.com', '555-8642', '484 Walnut St', 'Everytown', 'FL', '22689'),
-('C', 'QRS Enterprises', 'LLC', 'info@qrsenterprises.com', '555-8790', '726 Cedar St', 'Somewhereville', 'NY', '44892');
+('I', 'Michael', 'Johnson', 'michael.johnson@example.com', '555-2468', '369 Pine St', 'Anytown', 'CA', '36914'),
+('I', 'Emma', 'Brown', 'emma.brown@example.com', '555-9876', '654 Elm St', 'Nowhere', 'TX', '85203'),
+('I', 'Oliver', 'Clark', 'oliver.clark@example.com', '555-7531', '951 Oak St', 'Nowhere', 'TX', '14785'),
+('I', 'Sophia', 'Davis', 'sophia.davis@example.com', '555-3698', '258 Maple St', 'Anytown', 'CA', '63214'),
+('I', 'Jack', 'Hall', 'jack.hall@example.com', '555-9876', '753 Birch St', 'Nowhere', 'TX', '95136'),
+('I', 'Isabella', 'Moore', 'isabella.moore@example.com', '555-1478', '147 Cedar St', 'Anytown', 'CA', '75321'),
+('I', 'William', 'King', 'william.king@example.com', '555-9876', '369 Oak St', 'Nowhere', 'TX', '36587'),
+('I', 'Ava', 'Martin', 'ava.martin@example.com', '555-8520', '852 Pine St', 'Anytown', 'CA', '14785'),
+('I', 'Mia', 'Taylor', 'mia.taylor@example.com', '555-9876', '147 Maple St', 'Nowhere', 'TX', '63214'),
+('I', 'James', 'Smith', 'james.smith@example.com', '555-9632', '632 Oak St', 'Nowhere', 'TX', '95136'),
+('I', 'Charlotte', 'Brown', 'charlotte.brown@example.com', '555-3214', '369 Elm St', 'Anytown', 'CA', '36587'),
+('I', 'Benjamin', 'Miller', 'benjamin.miller@example.com', '555-9876', '147 Birch St', 'Nowhere', 'TX', '14785'),
+('I', 'Amelia', 'Johnson', 'amelia.johnson@example.com', '555-4567', '753 Cedar St', 'Anytown', 'CA', '63214'),
+('I', 'Ethan', 'White', 'ethan.white@example.com', '555-9876', '147 Pine St', 'Nowhere', 'TX', '36587'),
+('I', 'Liam', 'Jones', 'liam.jones@example.com', '555-8741', '369 Maple St', 'Anytown', 'CA', '14785'),
+('I', 'Aria', 'Smith', 'aria.smith@example.com', '555-9876', '632 Birch St', 'Nowhere', 'TX', '63214'),
+('C', 'Harper', 'Taylor', 'harper.taylor@example.com', '555-3698', '147 Cedar St', 'Anytown', 'CA', '36587'),
+('C', 'Sebastian', 'Brown', 'sebastian.brown@example.com', '555-9876', '753 Oak St', 'Nowhere', 'TX', '14785'),
+('C', 'Luna', 'Clark', 'luna.clark@example.com', '555-6321', '369 Pine St', 'Anytown', 'CA', '63214'),
+('C', 'Jackson', 'King', 'jackson.king@example.com', '555-9876', '147 Elm St', 'Nowhere', 'TX', '36587'),
+('C', 'Madison', 'Martin', 'madison.martin@example.com', '555-9876', '632 Oak St', 'Anytown', 'CA', '14785'),
+('C', 'Grayson', 'Johnson', 'grayson.johnson@example.com', '555-1478', '369 Cedar St', 'Nowhere', 'TX', '63214'),
+('C', 'Ella', 'Moore', 'ella.moore@example.com', '555-9876', '147 Pine St', 'Anytown', 'CA', '36587'),
+('C', 'Aiden', 'Hall', 'aiden.hall@example.com', '555-8520', '632 Maple St', 'Nowhere', 'TX', '14785'),
+('C', 'Scarlett', 'Davis', 'scarlett.davis@example.com', '555-9876', '369 Birch St', 'Anytown', 'CA', '63214'),
+('C', 'Lucas', 'White', 'lucas.white@example.com', '555-9632', '147 Cedar St', 'Nowhere', 'TX', '36587'),
+('C', 'Chloe', 'Smith', 'chloe.smith@example.com', '555-9876', '632 Oak St', 'Anytown', 'CA', '14785'),
+('C', 'Carter', 'Brown', 'carter.brown@example.com', '555-3214', '369 Pine St', 'Nowhere', 'TX', '63214'),
+('C', 'Penelope', 'Miller', 'penelope.miller@example.com', '555-9876', '147 Elm St', 'Anytown', 'CA', '36587'),
+('C', 'Daniel', 'Johnson', 'daniel.johnson@example.com', '555-8741', '632 Cedar St', 'Nowhere', 'TX', '14785'),
+('C', 'Madelyn', 'Taylor', 'madelyn.taylor@example.com', '555-9876', '369 Oak St', 'Anytown', 'CA', '63214'),
+('C', 'Logan', 'Clark', 'logan.clark@example.com', '555-3698', '147 Birch St', 'Nowhere', 'TX', '36587'),
+('C', 'Riley', 'King', 'riley.king@example.com', '555-9876', '632 Maple St', 'Anytown', 'CA', '14785'),
+('C', 'Evelyn', 'Martin', 'evelyn.martin@example.com', '555-6321', '369 Cedar St', 'Nowhere', 'TX', '63214'),
+('C', 'Mason', 'Moore', 'mason.moore@example.com', '555-9876', '147 Pine St', 'Anytown', 'CA', '36587'),
+('C', 'Eleanor', 'Hall', 'eleanor.hall@example.com', '555-8520', '632 Oak St', 'Nowhere', 'TX', '14785'),
+('C', 'Ian', 'Davis', 'ian.davis@example.com', '555-9876', '369 Elm St', 'Anytown', 'CA', '63214'),
+('C', 'Zoe', 'White', 'zoe.white@example.com', '555-9632', '147 Cedar St', 'Nowhere', 'TX', '36587'),
+('C', 'Nathan', 'Smith', 'nathan.smith@example.com', '555-9876', '632 Birch St', 'Anytown', 'CA', '14785'),
+('C', 'Aubrey', 'Brown', 'aubrey.brown@example.com', '555-3214', '369 Pine St', 'Nowhere', 'TX', '63214');
+
 
 -- Sample data for corporation table
 INSERT INTO dsr_corporation (corp_name, reg_no)
@@ -41,38 +66,66 @@ VALUES
 ('Finance Solutions Ltd. 3', 'FinanceABCDG'),
 ('HealthCare Providers LLC 3', 'HealthCare125'),
 ('Energy Dynamics Corp. 3', 'EnergyXYZ791'),
-('Energy Dynamics Corp. 5', 'EnergyXYZ793');
+('Infra Mart Energy Dynamics Corp. 6', 'Infra-EnergyXYZ793'),
+('Adani Infra Mart Finance Solutions Ltd.', 'Adani-FinanceABCDE'),
+('Reliance Infra Mart HealthCare Providers LLC', 'Reliance-HealthCare123'),
+('Tata Infra Mart Energy Dynamics Corp. 7', 'Tata-EnergyXYZ789'),
+('Infy Infra Mart Tech Innovations Inc. 2', 'Infy-Tech123457'),
+('Google Infra Mart Global Logistics Co. 2', 'Google-Logistics7891'),
+('FB Infra Mart Finance Solutions Ltd. 2', 'FB-FinanceABCDF');
 
 -- Sample data for cust_corporate table
 INSERT INTO dsr_cust_corporate (customer_id, emp_id, corp_id)
 VALUES
-(12, 'EMP002', 1),
-(13, 'EMP004', 1),
-(14, 'EMP006', 1),
-(15, 'EMP008', 2),
-(16, 'EMP010', 2),
-(17, 'EMP012', 2),
-(18, 'EMP014', 3),
-(19, 'EMP016', 3),
-(20, 'EMP018', 3),
-(21, 'EMP020', 4),
-(22, 'EMP022', 5);
+(24, 'EMP002', 1),
+(25, 'EMP004', 1),
+(26, 'EMP006', 1),
+(27, 'EMP008', 2),
+(28, 'EMP010', 2),
+(29, 'EMP012', 2),
+(30, 'EMP014', 3),
+(31, 'EMP016', 3),
+(32, 'EMP018', 3),
+(33, 'EMP020', 4),
+(34, 'EMP022', 5),
+(35, 'EMP004', 1),
+(36, 'EMP006', 1),
+(37, 'EMP008', 2),
+(38, 'EMP010', 2),
+(39, 'EMP012', 2),
+(40, 'EMP014', 3),
+(41, 'EMP016', 3),
+(42, 'EMP018', 3),
+(43, 'EMP020', 4),
+(44, 'EMP022', 5);
 
 
 -- Sample data for cust_individual table
 INSERT INTO dsr_cust_individual (customer_id, dl_no, insurance_company, insurance_policy_no)
 VALUES
-(1, 'DL123456', 'ABC Insurance', 'POLICY123'),
-(2, 'DL789012', 'XYZ Insurance', 'POLICY456'),
-(3, 'DL345678', '123 Insurance', 'POLICY789'),
-(4, 'DL901234', '456 Insurance', 'POLICYABC'),
-(5, 'DL567890', '789 Insurance', 'POLICYDEF'),
-(6, 'DL111111', 'AAA Insurance', 'POLICY111'),
-(7, 'DL333333', 'CCC Insurance', 'POLICY333'),
-(8, 'DL555555', 'EEE Insurance', 'POLICY555'),
-(9, 'DL777777', 'GGG Insurance', 'POLICY777'),
-(10, 'DL999999', 'III Insurance', 'POLICY999'),
-(11, 'DL112233', 'KKK Insurance', 'POLICY112');
+(1, 'DL1234561', 'ABC Insurance', 'POLICY1231'),
+(2, 'DL7890122', 'XYZ Insurance', 'POLICY4562'),
+(3, 'DL3456783', '123 Insurance', 'POLICY7893'),
+(4, 'DL9012344', '456 Insurance', 'POLICYABC4'),
+(5, 'DL5678905', '789 Insurance', 'POLICYDEF5'),
+(6, 'DL1111116', 'AAA Insurance', 'POLICY1116'),
+(7, 'DL3333337', 'CCC Insurance', 'POLICY3337'),
+(8, 'DL5555558', 'EEE Insurance', 'POLICY5558'),
+(9, 'DL7777779', 'GGG Insurance', 'POLICY7779'),
+(10, 'DL99999910', 'III Insurance', 'POLICY99910'),
+(11, 'DL12345611', 'ABC Insurance', 'POLICY12311'),
+(12, 'DL78901212', 'XYZ Insurance', 'POLICY45612'),
+(13, 'DL34567813', '123 Insurance', 'POLICY78913'),
+(14, 'DL90123414', '456 Insurance', 'POLICYABC14'),
+(15, 'DL56789015', '789 Insurance', 'POLICYDEF15'),
+(16, 'DL11111116', 'AAA Insurance', 'POLICY11116'),
+(17, 'DL33333317', 'CCC Insurance', 'POLICY33317'),
+(18, 'DL55555518', 'EEE Insurance', 'POLICY55518'),
+(19, 'DL77777719', 'GGG Insurance', 'POLICY77719'),
+(20, 'DL99999920', 'III Insurance', 'POLICY99920'),
+(21, 'DL12345621', 'ABC Insurance', 'POLICY12321'),
+(22, 'DL78901222', 'XYZ Insurance', 'POLICY45622'),
+(23, 'DL34567823', '123 Insurance', 'POLICY78923');
 
 
 -- Sample data for vehicle_class table
@@ -175,6 +228,8 @@ VALUES
 ('C', 40.1),
 ('C', 50.15),
 ('C', 70.2);
+
+
 -- Sample data for coupon_corp table
 INSERT INTO dsr_coupon_corp (coupon_id, corp_id)
 VALUES
@@ -187,7 +242,13 @@ VALUES
 (17, 7),
 (18, 8),
 (19, 9),
-(20, 10);
+(20, 10),
+(21, 11),
+(22, 12),
+(23, 13),
+(24, 14),
+(25, 15);
+
 
 -- Sample data for coupon_indiv table
 INSERT INTO dsr_coupon_indiv (coupon_id, valid_from, valid_to)
@@ -214,17 +275,19 @@ VALUES
 ('2023-08-01', NULL, 14000.00, NULL, 62.00, 'P', 4, 5, 8, 8, 8),
 ('2023-09-01', NULL, 22000.00, NULL, 85.00, 'P', 5, 1, 9, 9, 9),
 ('2023-10-01', NULL, 20000.00, NULL, 70.00, 'P', 1, 2, 10, 10, 10),
-('2023-12-01', '2023-12-05', 15000.00, 15540.00, 63.00, 'C', 3, 4, 12, 12, 12),
-('2024-01-01', '2024-01-15', 23000.00, 23960.00, 88.00, 'C', 4, 5, 13, 13, 13),
-('2024-02-01', '2024-02-08', 21000.00, 21620.00, 73.00, 'C', 5, 1, 14, 14, 14),
-('2024-03-01', NULL, 19000.00, NULL, 68.00, 'P', 1, 2, 15, 15, 15),
+('2023-12-01', '2023-12-05', 15000.00, 15540.00, 63.00, 'C', 3, 4, 12, 12, 10),
+('2024-01-01', '2024-01-15', 23000.00, 23960.00, 88.00, 'C', 4, 5, 25, 13, 15),
+('2024-02-01', '2024-02-08', 21000.00, 21620.00, 73.00, 'C', 5, 1, 26, 14, 16),
+('2024-03-01', NULL, 19000.00, NULL, 68.00, 'P', 1, 2, 27, 15, 17),
 ('2024-04-01', '2024-04-09', 16000.00, 16640.00, 64.00, 'C', 2, 3, 16, 16, NULL),
-('2024-05-01', '2024-05-15', 24000.00, 25020.00, 90.00, 'C', 3, 4, 17, 17, 17),
-('2024-06-01', '2024-06-18', 22000.00, 22900.00, 75.00, 'C', 4, 5, 18, 18, NULL),
-('2024-07-01', NULL, 20000.00, NULL, 70.00, 'P', 5, 1, 19, 19, 19),
-('2024-08-01', NULL, 17000.00, NULL, 65.00, 'P', 1, 2, 20, 20, 20),
-('2024-09-01', '2024-09-15', 25000.00, 26040.00, 95.00, 'C', 2, 3, 21, 21, 21),
-('2024-10-01', '2024-10-08', 23000.00, 23640.00, 80.00, 'C', 3, 4, 22, 22, 22);
+('2024-05-01', '2024-05-15', 24000.00, 25020.00, 90.00, 'C', 3, 4, 28, 17, 18),
+('2024-06-01', '2024-06-18', 22000.00, 22900.00, 75.00, 'C', 4, 5, 29, 18, NULL),
+('2024-07-01', NULL, 20000.00, NULL, 70.00, 'P', 5, 1, 30, 19, 20),
+('2024-08-01', NULL, 17000.00, NULL, 65.00, 'P', 1, 2, 31, 20, 21),
+('2024-09-01', '2024-09-15', 25000.00, 26040.00, 95.00, 'C', 2, 3, 32, 21, 22),
+('2024-10-01', '2024-10-08', 23000.00, 23640.00, 80.00, 'C', 3, 4, 33, 22, 23),
+('2024-07-01', NULL, 20000.00, NULL, 70.00, 'P', 5, 1, 34, 19, 24),
+('2024-08-01', NULL, 17000.00, NULL, 65.00, 'P', 1, 2, 35, 20, 25);
 
 
 -- Sample data for payment table
