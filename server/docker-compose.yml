@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: dsr_wowdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysql", "-h", "localhost", "-u", "root", "-p", "password", "-e", "SELECT 1"]
+      timeout: 20s
+      retries: 10
+
+  web:
+    build: .
+    command: tail -F anything
+    # command: ["python", "manage.py", "runserver", "0:8000"]
+    restart: always
+    volumes:
+      - ./:/code/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  db-data:

@@ -1,0 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database
+*.sqlite3
+db.sqlite3
+
+# Log files
+*.log
+
+# Media files
+media/
+
+# Static files
+staticfiles/
+
+# Secret key
+*.secret_key
+
+# Environment variables
+.env
+
+# Development environment
+venv/
+.env/
+
+# Compiled Python files
+*.pyc
+
+# macOS
+.DS_Store
+
+# Editor-specific files
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.idea/
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Cache files
+__pycache__/
+.cach*
+
+# Dependency directories
+.env/
+.env.bak/
+.env.tmp/
+
+# If you are using Poetry package manager
+poetry.lock
+pyproject.toml
