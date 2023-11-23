@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users_management',
     'swimlane',
+    'vehicle',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
