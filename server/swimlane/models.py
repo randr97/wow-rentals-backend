@@ -74,7 +74,7 @@ class Coupon(models.Model):
 
 
 class CouponIndividual(models.Model):
-    coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE)
+    coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE, related_name='individual_coupon')
     valid_from = models.DateField(null=False, blank=False)
     valid_to = models.DateField(null=False, blank=False)
 
@@ -83,7 +83,7 @@ class CouponIndividual(models.Model):
 
 
 class CouponCorporate(models.Model):
-    coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE)
+    coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE, related_name='corporate_coupon')
     corp_id = models.ForeignKey(Corporation, on_delete=models.CASCADE)
 
     def __str__(self):

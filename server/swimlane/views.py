@@ -5,10 +5,9 @@ from rest_framework.views import APIView
 
 from users_management.models import UserType
 
-from .models import (Corporation, CouponIndividual, CustomerCorporate,
+from .models import (Corporation, CustomerCorporate, Coupon,
                      CustomerIndividual, Payment)
-from .serializer import (CouponCorporateSerializer, CouponIndividualSerializer,
-                         CustomerCorporateSerializer,
+from .serializer import (CustomerCorporateSerializer, CouponSerializer,
                          CustomerIndividualSerializer, PaymentSerializer)
 
 
@@ -74,7 +73,15 @@ class PaymentView(APIView):
 
 
 class CouponView(APIView):
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        pass
+        return Response(
+            CouponSerializer(
+                Coupon.objects.filter(
+                    coupon_type=request.user.user_type,
+                    is_valid=True
+                ).order_by('pk'), many=True, allow_null=False).data,
+            status=status.HTTP_200_OK
+        )

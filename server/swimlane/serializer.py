@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import (Corporation, CouponCorporate, CouponIndividual,
-                     CustomerCorporate, CustomerIndividual, Payment)
+                     CustomerCorporate, CustomerIndividual, Payment, Coupon, CouponChoice)
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -60,6 +60,34 @@ class CustomerIndividualSerializer(serializers.ModelSerializer):
             "insurance_company": data.insurance_company,
             "insurance_policy_no": data.insurance_policy_no,
         }
+
+
+class CouponSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Coupon
+        fields = '__all__'
+
+    def to_representation(self, data):
+        res = {
+            "coupon_id": data.coupon_id,
+            "coupon_type": data.coupon_type,
+            "discount": data.discount,
+            "is_valid": data.is_valid,
+        }
+        try:
+            if data.coupon_type == CouponChoice.CORPORATE:
+                res.update({
+                    "corporate_coupon": CouponCorporateSerializer(data.corporate_coupon).data
+                })
+            else:
+                res.update({
+                    "individual_coupon": CouponIndividualSerializer(data.individual_coupon).data
+                })
+        except Exception as e:
+            print(f"Coupon Incomplete: {e}")
+            res = {}
+        return res
 
 
 class CouponIndividualSerializer(serializers.ModelSerializer):
