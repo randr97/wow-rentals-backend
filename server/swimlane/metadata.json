@@ -1,0 +1,14 @@
+{
+    "profile": {
+        "customer_type": [
+            {
+                "type": "INDIVIDUAL",
+                "key": "I"
+            },
+            {
+                "type": "CORPORATE",
+                "key": "C"
+            }
+        ]
+    }
+}

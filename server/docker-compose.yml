@@ -25,6 +25,7 @@ services:
     restart: always
     volumes:
       - ./:/code/
+      - web-server-site-packages:/usr/local/lib/python3.8/site-packages
     ports:
       - "8000:8000"
     depends_on:
@@ -39,3 +40,4 @@ services:
 
 volumes:
   db-data:
+  web-server-site-packages:
