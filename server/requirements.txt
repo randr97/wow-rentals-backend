@@ -5,3 +5,4 @@ ipdb
 djangorestframework-simplejwt[crypto]
 isort
 django-extensions
+django-health-check
