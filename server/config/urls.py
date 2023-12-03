@@ -21,4 +21,5 @@ urlpatterns = [
     path('user/', include('users_management.urls')),
     path('swimlane/', include('swimlane.urls')),
     path('healthcheck/', include('health_check.urls')),
+    path('vehicle/', include('vehicle.urls')),
 ]

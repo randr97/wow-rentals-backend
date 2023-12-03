@@ -5,9 +5,9 @@ from rest_framework.views import APIView
 
 from users_management.models import UserType
 
-from .models import (Corporation, CustomerCorporate, Coupon,
+from .models import (Corporation, Coupon, CustomerCorporate,
                      CustomerIndividual, Payment)
-from .serializer import (CustomerCorporateSerializer, CouponSerializer,
+from .serializer import (CouponSerializer, CustomerCorporateSerializer,
                          CustomerIndividualSerializer, PaymentSerializer)
 
 

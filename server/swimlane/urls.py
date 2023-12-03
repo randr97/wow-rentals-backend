@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import HomeView, PaymentView, CouponView
+from .views import CouponView, HomeView, PaymentView
 
 urlpatterns = [
     path('metadata/', HomeView.as_view({'get': 'metadata'}), name='home-apis-meta'),

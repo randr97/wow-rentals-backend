@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.db import models
@@ -45,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     address_street = models.CharField(max_length=100, null=False, blank=False)
     address_city = models.CharField(max_length=100, null=False, blank=False)
-    address_state = models.CharField(max_length=100, null=False, blank=False)
+    address_state = models.CharField(max_length=100, null=False, blank=False, choices=settings.STATE_CHOICES)
     address_zipcode = models.CharField(max_length=100, null=False, blank=False)
 
     objects = EmailUserManager()

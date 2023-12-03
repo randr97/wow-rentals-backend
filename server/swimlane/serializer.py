@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from .models import (Corporation, CouponCorporate, CouponIndividual,
-                     CustomerCorporate, CustomerIndividual, Payment, Coupon, CouponChoice)
+from .models import (Corporation, Coupon, CouponChoice, CouponCorporate,
+                     CouponIndividual, CustomerCorporate, CustomerIndividual,
+                     Payment)
 
 
 class PaymentSerializer(serializers.ModelSerializer):
