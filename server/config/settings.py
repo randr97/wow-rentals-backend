@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ['corsheaders']
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -58,6 +61,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if DEBUG:
+    MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware']
+    CORS_ALLOWED_ORIGINS = [
+        # "http://*",
+        # "https://*",
+        "http://localhost:4200",
+    ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [

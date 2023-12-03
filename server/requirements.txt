@@ -6,3 +6,4 @@ djangorestframework-simplejwt[crypto]
 isort
 django-extensions
 django-health-check
+django-cors-headers
