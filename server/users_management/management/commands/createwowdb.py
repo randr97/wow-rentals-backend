@@ -1,8 +1,11 @@
 import random
 from datetime import datetime
+
 from django.core.management.base import BaseCommand
 
-from swimlane.models import Corporation, CustomerCorporate, CustomerIndividual, Coupon, CouponCorporate, CouponIndividual, Payment
+from swimlane.models import (Corporation, Coupon, CouponCorporate,
+                             CouponIndividual, CustomerCorporate,
+                             CustomerIndividual, Payment)
 from users_management.models import User
 from vehicle.models import OfficeLocation, Vehicle, VehicleClass
 
