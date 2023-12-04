@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -28,7 +30,7 @@ class HomeView(viewsets.ViewSet):
         }
         return Response(data=resp, status=status.HTTP_200_OK)
 
-    def customer(self, request):
+    def update_customer(self, request):
         CustomerModel, CustomerSerializer = {
             UserType.INDIVIDUAL: (CustomerIndividual, CustomerIndividualSerializer),
             UserType.CORPORATE: (CustomerCorporate, CustomerCorporateSerializer),
@@ -47,6 +49,17 @@ class HomeView(viewsets.ViewSet):
             sez.save()
         return Response(sez.data, status=status.HTTP_200_OK)
 
+    def get_customer(self, request):
+        try:
+            if request.user.user_type == UserType.INDIVIDUAL:
+                customer, CustomerSerializer = (request.user.individual_customer, CustomerIndividualSerializer)
+            else:
+                customer, CustomerSerializer = (request.user.corporate_customer, CustomerCorporateSerializer)
+            return Response(CustomerSerializer(customer).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'message': 'Customer details unavailable'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class PaymentView(APIView):
     permission_classes = [IsAuthenticated]
@@ -61,14 +74,14 @@ class PaymentView(APIView):
 
     def post(self, request):
         request.data["customer_id"] = request.user.pk
+        request.data["card_exp_date"] = datetime.strptime(request.data["card_exp_date"], '%Y-%m').date()
         sez = PaymentSerializer(data=request.data)
-        if sez.is_valid():
+        if sez.is_valid(raise_exception=True):
             sez.save()
-            return Response(sez.data, status=status.HTTP_200_OK)
-        return Response({'message': 'Invalid information'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(sez.data, status=status.HTTP_200_OK)
 
     def delete(self, request):
-        Payment.objects.filter(customer_id=request.user, payment_id=request.data["payment_id"]).delete()
+        Payment.objects.filter(customer_id=request.user, payment_id=request.GET["payment_id"]).delete()
         return Response({'message': 'Payment method deleted'}, status=status.HTTP_200_OK)
 
 

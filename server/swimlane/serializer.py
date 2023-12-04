@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import serializers
 
 from .models import (Corporation, Coupon, CouponChoice, CouponCorporate,
@@ -17,6 +19,9 @@ class PaymentSerializer(serializers.ModelSerializer):
             "payment_method": data.payment_method,
             "card_number": data.card_number,
             "is_valid": data.is_valid,
+            "card_name": data.card_name,
+            "card_exp_date": datetime.strftime(data.card_exp_date, '%Y-%m'),
+            "card_zipcode": data.card_zipcode,
         }
 
 

@@ -9,7 +9,9 @@ from .serializer import OfficeLocationSerializer
 
 class VehicleAPI(APIView):
     permission_classes = [AllowAny]
-    pass
+
+    def get(self, request):
+        pass
 
 
 class LocationAPI(APIView):

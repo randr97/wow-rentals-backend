@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from swimlane.models import Coupon
 from users_management.models import User
 
 
@@ -53,7 +54,7 @@ class VehicleClass(models.Model):
 class Vehicle(models.Model):
     vehicle_id = models.BigAutoField(primary_key=True)
     location_id = models.ForeignKey(OfficeLocation, on_delete=models.CASCADE)
-    class_id = models.OneToOneField(VehicleClass, on_delete=models.SET_NULL, null=True)
+    class_id = models.ForeignKey(VehicleClass, on_delete=models.SET_NULL, null=True)
     make = models.CharField(max_length=100, null=False, blank=False)
     model = models.CharField(max_length=100, null=False, blank=False)
     vin_number = models.CharField(max_length=100, null=False, blank=False)
@@ -68,17 +69,17 @@ class Vehicle(models.Model):
 
 class Booking(models.Model):
     booking_id = models.BigAutoField(primary_key=True)
-    customer_id = models.OneToOneField(
+    customer_id = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='user_bookings')
-    vehicle_id = models.OneToOneField(
+    vehicle_id = models.ForeignKey(
         Vehicle, on_delete=models.SET_NULL, null=True, related_name='vehicle_bookings')
 
     pickup_date = models.DateField(null=False, blank=False)
-    pickup_location = models.OneToOneField(
+    pickup_location = models.ForeignKey(
         OfficeLocation, on_delete=models.SET_NULL, null=True, related_name='pickup_bookings')
 
     dropoff_date = models.DateField(null=False, blank=False)
-    dropoff_location = models.OneToOneField(
+    dropoff_location = models.ForeignKey(
         OfficeLocation, on_delete=models.SET_NULL, null=True, related_name='dropoff_bookings')
 
     start_odo = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
@@ -87,7 +88,9 @@ class Booking(models.Model):
     daily_limit = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     trip_status = models.CharField(max_length=1, null=False, blank=False, choices=TripStatus.choices)
 
-    next_available_date = models.DateField(null=False, blank=False)
+    next_available_date = models.DateField(null=True, blank=True)
+
+    coupon_id = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, related_name='user_coupons')
 
     def __str__(self):
         return self.booking_id

@@ -1,11 +1,6 @@
 from rest_framework import serializers
 
-from .models import (
-    OfficeLocation,
-    VehicleClass,
-    Vehicle,
-    Booking,
-)
+from .models import Booking, OfficeLocation, Vehicle, VehicleClass
 
 
 class OfficeLocationSerializer(serializers.ModelSerializer):

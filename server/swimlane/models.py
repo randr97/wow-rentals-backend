@@ -33,7 +33,7 @@ class Corporation(models.Model):
 
 
 class CustomerIndividual(models.Model):
-    customer_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    customer_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='individual_customer')
     dl_number = models.CharField(max_length=100, null=False, blank=False)
     insurance_company = models.CharField(max_length=100, null=False, blank=False)
     insurance_policy_no = models.CharField(max_length=100, null=False, blank=False)
@@ -43,7 +43,7 @@ class CustomerIndividual(models.Model):
 
 
 class CustomerCorporate(models.Model):
-    customer_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    customer_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='corporate_customer')
     corp_id = models.ForeignKey(Corporation, on_delete=models.CASCADE)
     emp_id = models.CharField(max_length=100, null=False, blank=False)
 
@@ -58,6 +58,9 @@ class Payment(models.Model):
     card_number = models.CharField(max_length=100, null=False, blank=False)
     # for gift card we make this false
     is_valid = models.BooleanField(default=True)
+    card_name = models.CharField(max_length=100, null=False, blank=False)
+    card_exp_date = models.DateField(null=False, blank=False)
+    card_zipcode = models.CharField(max_length=5, null=False, blank=False)
 
     def __str__(self):
         return f"{PaymentChoice(self.payment_method).name.lower()} card of {self.customer_id.email}"
