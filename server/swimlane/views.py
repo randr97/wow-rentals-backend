@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users_management.models import UserType
+from users_management.serializer import UserSerializer
 
 from .models import (Corporation, Coupon, CustomerCorporate,
                      CustomerIndividual, Payment)
@@ -25,8 +26,10 @@ class HomeView(viewsets.ViewSet):
         cus_data = CustomerSerializer(CustomerModel.objects.filter(customer_id=request.user), many=True).data
         resp = {
             "is_profile_complete": True if cus_data else False,
-            "customer_data": cus_data,
-            "user_type": request.user.user_type,
+            "individual_customer": CustomerIndividualSerializer(CustomerIndividual.objects.filter(customer_id=request.user), many=True).data,
+            "corporate_customer": CustomerCorporateSerializer(CustomerCorporate.objects.filter(customer_id=request.user), many=True).data,
+            "user": UserSerializer(request.user).data,
+            "payment": PaymentSerializer(Payment.objects.filter(customer_id=request.user.pk), many=True).data,
         }
         return Response(data=resp, status=status.HTTP_200_OK)
 
