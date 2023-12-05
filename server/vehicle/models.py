@@ -93,7 +93,7 @@ class Booking(models.Model):
     coupon_id = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, related_name='user_coupons')
 
     def __str__(self):
-        return self.booking_id
+        return str(self.booking_id)
 
     def save(self, *args, **kwargs):
         self.next_available_date = self.dropoff_date + timedelta(days=1)

@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand
 
@@ -7,7 +7,7 @@ from swimlane.models import (Corporation, Coupon, CouponCorporate,
                              CouponIndividual, CustomerCorporate,
                              CustomerIndividual, Payment)
 from users_management.models import User
-from vehicle.models import OfficeLocation, Vehicle, VehicleClass
+from vehicle.models import OfficeLocation, Vehicle, VehicleClass, Booking
 
 
 class Command(BaseCommand):
@@ -370,6 +370,32 @@ class Command(BaseCommand):
         for i, p in enumerate(payment):
             p.pk = i + 1
             p.save()
+
+        bookings = [
+            Booking(pickup_date='2023-06-01', start_odo=13000.00, end_odo=None, daily_limit=65.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=2), dropoff_location=OfficeLocation.objects.get(pk=3), customer_id=User.objects.get(pk=6), vehicle_id=Vehicle.objects.get(pk=6), coupon_id=Coupon.objects.get(pk=6)),
+            Booking(pickup_date='2023-04-01', start_odo=17000.00, end_odo=None, daily_limit=75.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=3), dropoff_location=OfficeLocation.objects.get(pk=4), customer_id=User.objects.get(pk=7), vehicle_id=Vehicle.objects.get(pk=7), coupon_id=Coupon.objects.get(pk=7)),
+            Booking(pickup_date='2023-08-01', start_odo=14000.00, end_odo=None, daily_limit=62.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=4), dropoff_location=OfficeLocation.objects.get(pk=5), customer_id=User.objects.get(pk=8), vehicle_id=Vehicle.objects.get(pk=8), coupon_id=Coupon.objects.get(pk=8)),
+            Booking(pickup_date='2023-09-01', start_odo=22000.00, end_odo=None, daily_limit=85.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=5), dropoff_location=OfficeLocation.objects.get(pk=1), customer_id=User.objects.get(pk=9), vehicle_id=Vehicle.objects.get(pk=9), coupon_id=Coupon.objects.get(pk=9)),
+            Booking(pickup_date='2023-10-01', start_odo=20000.00, end_odo=None, daily_limit=70.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=1), dropoff_location=OfficeLocation.objects.get(pk=2), customer_id=User.objects.get(pk=10), vehicle_id=Vehicle.objects.get(pk=10), coupon_id=Coupon.objects.get(pk=10)),
+            Booking(pickup_date='2023-12-01', start_odo=15000.00, end_odo=15540.00, daily_limit=63.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=3), dropoff_location=OfficeLocation.objects.get(pk=4), customer_id=User.objects.get(pk=12), vehicle_id=Vehicle.objects.get(pk=12), coupon_id=Coupon.objects.get(pk=10)),
+            Booking(pickup_date='2024-01-01', start_odo=23000.00, end_odo=23960.00, daily_limit=88.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=4), dropoff_location=OfficeLocation.objects.get(pk=5), customer_id=User.objects.get(pk=25), vehicle_id=Vehicle.objects.get(pk=13), coupon_id=Coupon.objects.get(pk=15)),
+            Booking(pickup_date='2024-02-01', start_odo=21000.00, end_odo=21620.00, daily_limit=73.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=5), dropoff_location=OfficeLocation.objects.get(pk=1), customer_id=User.objects.get(pk=26), vehicle_id=Vehicle.objects.get(pk=14), coupon_id=Coupon.objects.get(pk=16)),
+            Booking(pickup_date='2024-03-01', start_odo=19000.00, end_odo=None, daily_limit=68.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=1), dropoff_location=OfficeLocation.objects.get(pk=2), customer_id=User.objects.get(pk=27), vehicle_id=Vehicle.objects.get(pk=15), coupon_id=Coupon.objects.get(pk=17)),
+            Booking(pickup_date='2024-04-01', start_odo=16000.00, end_odo=16640.00, daily_limit=64.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=2), dropoff_location=OfficeLocation.objects.get(pk=3), customer_id=User.objects.get(pk=16), vehicle_id=Vehicle.objects.get(pk=16), coupon_id=None),
+            Booking(pickup_date='2024-05-01', start_odo=24000.00, end_odo=25020.00, daily_limit=90.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=3), dropoff_location=OfficeLocation.objects.get(pk=4), customer_id=User.objects.get(pk=28), vehicle_id=Vehicle.objects.get(pk=17), coupon_id=Coupon.objects.get(pk=18)),
+            Booking(pickup_date='2024-06-01', start_odo=22000.00, end_odo=22900.00, daily_limit=75.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=4), dropoff_location=OfficeLocation.objects.get(pk=5), customer_id=User.objects.get(pk=29), vehicle_id=Vehicle.objects.get(pk=18), coupon_id=None),
+            Booking(pickup_date='2024-07-01', start_odo=20000.00, end_odo=None, daily_limit=70.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=5), dropoff_location=OfficeLocation.objects.get(pk=1), customer_id=User.objects.get(pk=30), vehicle_id=Vehicle.objects.get(pk=19), coupon_id=Coupon.objects.get(pk=20)),
+            Booking(pickup_date='2024-08-01', start_odo=17000.00, end_odo=None, daily_limit=65.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=1), dropoff_location=OfficeLocation.objects.get(pk=2), customer_id=User.objects.get(pk=31), vehicle_id=Vehicle.objects.get(pk=20), coupon_id=Coupon.objects.get(pk=21)),
+            Booking(pickup_date='2024-09-01', start_odo=25000.00, end_odo=26040.00, daily_limit=95.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=2), dropoff_location=OfficeLocation.objects.get(pk=3), customer_id=User.objects.get(pk=32), vehicle_id=Vehicle.objects.get(pk=21), coupon_id=Coupon.objects.get(pk=22)),
+            Booking(pickup_date='2024-10-01', start_odo=23000.00, end_odo=23640.00, daily_limit=80.00, trip_status='C', pickup_location=OfficeLocation.objects.get(pk=3), dropoff_location=OfficeLocation.objects.get(pk=4), customer_id=User.objects.get(pk=33), vehicle_id=Vehicle.objects.get(pk=22), coupon_id=Coupon.objects.get(pk=23)),
+            Booking(pickup_date='2024-07-01', start_odo=20000.00, end_odo=None, daily_limit=70.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=5), dropoff_location=OfficeLocation.objects.get(pk=1), customer_id=User.objects.get(pk=34), vehicle_id=Vehicle.objects.get(pk=1), coupon_id=Coupon.objects.get(pk=24)),
+            Booking(pickup_date='2024-08-01', start_odo=17000.00, end_odo=None, daily_limit=65.00, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=1), dropoff_location=OfficeLocation.objects.get(pk=2), customer_id=User.objects.get(pk=35), vehicle_id=Vehicle.objects.get(pk=2), coupon_id=Coupon.objects.get(pk=25)),
+        ]
+        for i, b in enumerate(bookings):
+            b.dropoff_date = datetime.strptime(b.pickup_date, '%Y-%m-%d') + timedelta(days=int(random.uniform(1, 9)))
+            b.pickup_date = datetime.strptime(b.pickup_date, '%Y-%m-%d')
+            b.pk = i + 1
+            b.save()
 
         self.stdout.write(
             self.style.SUCCESS('DB setup successful')
