@@ -26,7 +26,11 @@ class VehicleAPI(APIView):
             query &= Q(class_id__in=request.data.get('class_id'))
         if request.data.get('vehicle_id__gt'):
             query &= Q(vehicle_id__gt=request.data.get('vehicle_id__gt'))
-        return Response(VehicleSerializer(Vehicle.objects.filter(query).order_by('vehicle_id')[:100], many=True).data, status=status.HTTP_200_OK)
+        data = VehicleSerializer(Vehicle.objects.filter(query).order_by('vehicle_id')[:1000], many=True).data
+        return Response({
+            "data": data,
+            "has_next": False if len(data) < 1000 else True,
+        }, status=status.HTTP_200_OK)
 
 
 class LocationAPI(APIView):
