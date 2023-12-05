@@ -92,6 +92,12 @@ class Booking(models.Model):
 
     coupon_id = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, related_name='user_coupons')
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['vehicle_id', 'pickup_date']),
+            models.Index(fields=['vehicle_id', 'dropoff_date']),
+        ]
+
     def __str__(self):
         return str(self.booking_id)
 
