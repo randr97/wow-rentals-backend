@@ -1,11 +1,11 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.conf import settings
 # from django.contrib.gis.db import models as geo
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 
-from swimlane.models import Coupon
+from swimlane.models import Coupon, Payment
 from users_management.models import User
 
 
@@ -13,6 +13,11 @@ class TripStatus(models.TextChoices):
     PENDING = "P", _("PENDING")
     ONGOING = "O", _("ONGOING")
     ABORTED = "A", _("ABORTED")
+    COMPLETE = "C", _("COMPLETE")
+
+
+class PaymentStatus(models.TextChoices):
+    PENDING = "P", _("PENDING")
     COMPLETE = "C", _("COMPLETE")
 
 
@@ -82,8 +87,8 @@ class Booking(models.Model):
     dropoff_location = models.ForeignKey(
         OfficeLocation, on_delete=models.SET_NULL, null=True, related_name='dropoff_bookings')
 
-    start_odo = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
-    end_odo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=False)
+    start_odo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=False, default=None)
+    end_odo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=False, default=None)
 
     daily_limit = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     trip_status = models.CharField(max_length=1, null=False, blank=False, choices=TripStatus.choices)
@@ -92,10 +97,15 @@ class Booking(models.Model):
 
     coupon_id = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, related_name='user_coupons')
 
+    payment_status = models.CharField(max_length=1, choices=PaymentStatus.choices, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    payment = models.ManyToManyField(Payment, related_name='paid_bookings')
+
     class Meta:
         indexes = [
             models.Index(fields=['vehicle_id', 'pickup_date']),
             models.Index(fields=['vehicle_id', 'dropoff_date']),
+            models.Index(fields=['vehicle_id', 'next_available_date']),
         ]
 
     def __str__(self):
@@ -106,3 +116,54 @@ class Booking(models.Model):
         if self.pickup_location != self.dropoff_location:
             self.next_available_date = self.dropoff_date + timedelta(days=1)
         super().save(*args, **kwargs)
+
+    def book_vehicle(self):
+        with transaction.atomic():
+            # Check for existing bookings for the given vehicle and overlapping dates
+            query = models.Q(
+                vehicle_id=self.vehicle_id,
+                pickup_date__lte=self.pickup_date,
+                next_available_date__gt=self.pickup_date,
+                payment_status=PaymentStatus.COMPLETE,
+            )
+            query |= models.Q(
+                vehicle_id=self.vehicle_id,
+                pickup_date__lte=self.dropoff_date,
+                next_available_date__gt=self.dropoff_date,
+                payment_status=PaymentStatus.COMPLETE,
+            )
+            query |= models.Q(
+                vehicle_id=self.vehicle_id,
+                pickup_date__lte=self.pickup_date,
+                next_available_date__gt=self.pickup_date,
+                payment_status=PaymentStatus.PENDING,
+                created_at__gt=(datetime.now() - timedelta(minutes=5)),
+            )
+            query |= models.Q(
+                vehicle_id=self.vehicle_id,
+                pickup_date__lte=self.dropoff_date,
+                next_available_date__gt=self.dropoff_date,
+                payment_status=PaymentStatus.PENDING,
+                created_at__gt=(datetime.now() - timedelta(minutes=5)),
+            )
+            existing_bookings = Booking.objects.filter(query).exclude(
+                booking_id=self.booking_id
+            )
+
+            if existing_bookings.exists():
+                raise ValueError("Vehicle is already booked for the selected dates.")
+
+            # Create a new booking with 'pending_payment' status
+            new_booking = Booking(
+                customer_id=self.customer_id,
+                vehicle_id=self.vehicle,
+                pickup_date=self.pickup_date,
+                dropoff_date=self.dropoff_date,
+                pickup_location=self.pickup_location,
+                dropoff_location=self.dropoff_location,
+                payment_status=PaymentStatus.PENDING,
+                trip_status=TripStatus.PENDING,
+            )
+            new_booking.save()
+            new_booking.refresh_from_db()
+            return new_booking

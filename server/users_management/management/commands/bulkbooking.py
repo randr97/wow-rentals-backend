@@ -1,11 +1,11 @@
 import random
 from datetime import datetime, timedelta
-from faker import Faker
 
 from django.core.management.base import BaseCommand
+from faker import Faker
 
 from users_management.models import User
-from vehicle.models import Vehicle, Booking, OfficeLocation, VehicleClass
+from vehicle.models import Booking, OfficeLocation, Vehicle, VehicleClass
 
 
 class Command(BaseCommand):

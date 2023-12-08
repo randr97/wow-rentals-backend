@@ -68,6 +68,7 @@ class Payment(models.Model):
 
 class Coupon(models.Model):
     coupon_id = models.BigAutoField(primary_key=True, null=False, blank=False)
+    code = models.CharField(max_length=10, unique=True, null=False, blank=False)
     coupon_type = models.CharField(null=False, blank=False, max_length=1, choices=CouponChoice.choices)
     discount = models.DecimalField(max_digits=5, decimal_places=2, null=False, blank=False)
     is_valid = models.BooleanField(null=False, blank=False)

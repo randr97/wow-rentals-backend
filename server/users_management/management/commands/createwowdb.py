@@ -7,7 +7,7 @@ from swimlane.models import (Corporation, Coupon, CouponCorporate,
                              CouponIndividual, CustomerCorporate,
                              CustomerIndividual, Payment)
 from users_management.models import User
-from vehicle.models import OfficeLocation, Vehicle, VehicleClass, Booking
+from vehicle.models import Booking, OfficeLocation, Vehicle, VehicleClass
 
 
 class Command(BaseCommand):

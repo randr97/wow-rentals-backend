@@ -1,15 +1,20 @@
+import random
 from datetime import datetime
 
+from django.db.models import Q
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users_management.models import UserType
 from users_management.serializer import UserSerializer
+from vehicle.models import Booking, PaymentStatus, TripStatus
+from vehicle.serializer import BookingsSerializer
 
-from .models import (Corporation, Coupon, CustomerCorporate,
-                     CustomerIndividual, Payment)
+from .models import (Corporation, Coupon, CouponCorporate, CouponIndividual,
+                     CustomerCorporate, CustomerIndividual, Payment)
 from .serializer import (CouponSerializer, CustomerCorporateSerializer,
                          CustomerIndividualSerializer, PaymentSerializer)
 
@@ -93,11 +98,117 @@ class CouponView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        if request.user.user_type == UserType.INDIVIDUAL:
+            query = Q(individual_coupon__valid_to__gte=datetime.now().date())
+        else:
+            query = Q(corporate_coupon__corp_id=request.user.corporate_customer.corp_id)
+        query &= Q(coupon_type=request.user.user_type, is_valid=True)
         return Response(
             CouponSerializer(
-                Coupon.objects.filter(
-                    coupon_type=request.user.user_type,
-                    is_valid=True
-                ).order_by('pk'), many=True, allow_null=False).data,
+                Coupon.objects.filter(query).order_by('pk'), many=True, allow_null=False).data,
             status=status.HTTP_200_OK
         )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def validate_coupon(request):
+    try:
+        is_valid = (
+            request.user.user_type == UserType.INDIVIDUAL and
+            CouponIndividual.objects.filter(
+                pk=request.data["coupon_id"],
+                valid_to__gte=datetime.now().date()
+            ).count()
+        ) or (
+            request.user.user_type == UserType.CORPORATE and
+            CouponCorporate.objects.filter(
+                pk=request.data["coupon_id"], corp_id=request.user.corporate_customer.corp_id
+            ).count()
+        )
+    except Exception as e:
+        print(e)
+        is_valid = False
+    return Response({'is_valid': is_valid}, status=status.HTTP_201_CREATED)
+
+
+class BookView(viewsets.ViewSet):
+
+    permission_classes = [IsAuthenticated]
+
+    def pending_booking(self, request):
+        try:
+            booking = Booking(
+                vehicle_id=request.data["vehicle_id"],
+                customer_id=request.user.pk,
+                pickup_date=request.data["pickup_date"],
+                pickup_location=request.data["pickup_location"],
+                dropoff_date=request.data["dropoff_date"],
+                dropoff_location=request.data["dropoff_location"],
+            ).book_vehicle()
+            return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
+        except ValueError:
+            return Response({'Vehicle already booked!'}, status=status.HTTP_403_FORBIDDEN)
+
+    def complete_booking(self, request):
+        booking = Booking.objects.get(
+            pk=request.data["booking_id"],
+            customer_id=request.user.pk,
+            trip_status=TripStatus.PENDING,
+            payment_status=PaymentStatus.PENDING,
+        )
+        if Payment.objects.filter(customer_id=request.user.pk, pk__in=request.data["payment_id"]).exists():
+            booking.payment_status = PaymentStatus.COMPLETE
+            booking.payment.set(
+                Payment.objects.filter(
+                    customer_id=request.user.pk,
+                    pk__in=request.data["payment_id"]
+                )
+            )
+            booking.save()
+            return Response({'message': 'Payment Successful!'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Invalid Request!'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update_booking(self, request):
+        booking = Booking.objects.get(
+            pk=request.data["booking_id"],
+            customer_id=request.user.pk,
+            trip_status__in=[TripStatus.PENDING, TripStatus.ONGOING],
+            payment_status=PaymentStatus.COMPLETE,
+        )
+        booking.dropoff_location = request.data.get("dropoff_location") or booking.dropoff_location
+        if "payment_id" in request.data and Payment.objects.filter(
+                customer_id=request.user.pk,
+                pk__in=request.data["payment_id"]).exists():
+
+            booking.payment.set(
+                Payment.objects.filter(customer_id=request.user.pk, pk__in=request.data["payment_id"])
+            )
+        booking.save()
+        booking.refresh_from_db()
+        return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
+
+    def start_booking(self, request):
+        booking = Booking.objects.get(
+            pk=request.data["booking_id"],
+            customer_id=request.user.pk,
+            trip_status__in=TripStatus.PENDING,
+            payment_status=PaymentStatus.COMPLETE,
+        )
+        booking.trip_status = TripStatus.ONGOING
+        booking.start_odo = random.uniform(20000, 80000)
+        booking.save()
+        return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
+
+    def end_booking(self, request):
+        booking = Booking.objects.get(
+            pk=request.data["booking_id"],
+            customer_id=request.user.pk,
+            trip_status__in=TripStatus.ONGOING,
+            payment_status=PaymentStatus.COMPLETE,
+        )
+        booking.trip_status = TripStatus.COMPLETE
+        booking.end_odo = booking.start_odo + random.uniform(100, 1000)
+        booking.save()
+        return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
