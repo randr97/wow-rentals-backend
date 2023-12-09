@@ -110,9 +110,7 @@ class CouponView(APIView):
         )
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def validate_coupon(request):
+def coupon_is_valid(request):
     try:
         is_valid = (
             request.user.user_type == UserType.INDIVIDUAL and
@@ -130,7 +128,13 @@ def validate_coupon(request):
     except Exception as e:
         print(e)
         is_valid = False
-    return Response({'is_valid': is_valid}, status=status.HTTP_201_CREATED)
+    return is_valid
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def validate_coupon(request):
+    return Response({'is_valid': coupon_is_valid(request)}, status=status.HTTP_201_CREATED)
 
 
 class BookView(viewsets.ViewSet):
@@ -158,6 +162,8 @@ class BookView(viewsets.ViewSet):
             trip_status=TripStatus.PENDING,
             payment_status=PaymentStatus.PENDING,
         )
+        if "coupon_code" in request and coupon_is_valid(request):
+            booking.coupon_id = Coupon.objects.get(coupon_code=request.data["coupon_code"]).pk
         if Payment.objects.filter(customer_id=request.user.pk, pk__in=request.data["payment_id"]).exists():
             booking.payment_status = PaymentStatus.COMPLETE
             booking.payment.set(
