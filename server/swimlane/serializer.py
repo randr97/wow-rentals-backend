@@ -77,6 +77,7 @@ class CouponSerializer(serializers.ModelSerializer):
     def to_representation(self, data):
         res = {
             "coupon_id": data.coupon_id,
+            "coupon_code": data.coupon_code,
             "coupon_type": data.coupon_type,
             "discount": data.discount,
             "is_valid": data.is_valid,

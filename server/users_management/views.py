@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.shortcuts import redirect
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
@@ -64,9 +65,7 @@ class VerifyEmailView(APIView):
         if user is not None and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
-            return Response({'detail': 'Email successfully verified.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'detail': 'Invalid verification link.'}, status=status.HTTP_400_BAD_REQUEST)
+        return redirect('/')
 
 
 class ProfileView(viewsets.ViewSet):

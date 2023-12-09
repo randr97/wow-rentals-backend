@@ -29,15 +29,10 @@ class OfficeLocation(models.Model):
     address_state = models.CharField(max_length=100, null=False, blank=False, choices=settings.STATE_CHOICES)
     address_zipcode = models.CharField(max_length=100, null=False, blank=False)
 
-    # lat = geo.PointField(null=False, blank=False)
-    # lan = geo.PointField(null=False, blank=False)
-
     phone = models.CharField(max_length=100, null=False, blank=False)
 
     class Meta:
         indexes = [
-            # models.Index(fields=['lat']),
-            # models.Index(fields=['lan']),
             models.Index(fields=['address_city']),
             models.Index(fields=['address_street']),
         ]

@@ -117,13 +117,14 @@ def validate_coupon(request):
         is_valid = (
             request.user.user_type == UserType.INDIVIDUAL and
             CouponIndividual.objects.filter(
-                pk=request.data["coupon_id"],
+                coupon_id=Coupon.objects.filter(coupon_code=request.data["coupon_code"]).first(),
                 valid_to__gte=datetime.now().date()
             ).count()
         ) or (
             request.user.user_type == UserType.CORPORATE and
             CouponCorporate.objects.filter(
-                pk=request.data["coupon_id"], corp_id=request.user.corporate_customer.corp_id
+                coupon_id=Coupon.objects.filter(coupon_code=request.data["coupon_code"]).first(),
+                corp_id=request.user.corporate_customer.corp_id
             ).count()
         )
     except Exception as e:

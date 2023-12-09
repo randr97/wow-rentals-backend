@@ -68,10 +68,16 @@ class Payment(models.Model):
 
 class Coupon(models.Model):
     coupon_id = models.BigAutoField(primary_key=True, null=False, blank=False)
-    code = models.CharField(max_length=10, unique=True, null=False, blank=False)
+    coupon_code = models.CharField(max_length=10, unique=True, null=False, blank=False)
     coupon_type = models.CharField(null=False, blank=False, max_length=1, choices=CouponChoice.choices)
     discount = models.DecimalField(max_digits=5, decimal_places=2, null=False, blank=False)
     is_valid = models.BooleanField(null=False, blank=False)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['coupon_code']),
+            models.Index(fields=['coupon_id', 'coupon_code']),
+        ]
 
     def __str__(self):
         return f"[{self.coupon_id}] {CouponChoice(self.coupon_type).name.lower()} coupon with discount {self.discount}"

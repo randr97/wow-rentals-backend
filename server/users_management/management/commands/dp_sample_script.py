@@ -7,7 +7,10 @@ from swimlane.models import (Corporation, Coupon, CouponCorporate,
                              CouponIndividual, CustomerCorporate,
                              CustomerIndividual, Payment)
 from users_management.models import User
-from vehicle.models import OfficeLocation, Vehicle, VehicleClass, Booking
+from vehicle.models import Booking, OfficeLocation, Vehicle, VehicleClass
+
+from .utils import get_random_string
+
 
 class Command(BaseCommand):
     help = "Adds default users"
@@ -152,6 +155,25 @@ class Command(BaseCommand):
             ci.pk = i + 1
             ci.save()
 
+        vehicle_class = [
+            VehicleClass(vehicle_class='Sedan', rent_charge=50.00, extra_charge=5.00),
+            VehicleClass(vehicle_class='SUV', rent_charge=70.00, extra_charge=7.00),
+            VehicleClass(vehicle_class='Truck', rent_charge=80.00, extra_charge=8.00),
+            VehicleClass(vehicle_class='Compact Car', rent_charge=45.00, extra_charge=4.50),
+            VehicleClass(vehicle_class='Luxury Car', rent_charge=100.00, extra_charge=10.00),
+            VehicleClass(vehicle_class='Convertible', rent_charge=85.00, extra_charge=8.50),
+            VehicleClass(vehicle_class='Sports Car', rent_charge=120.00, extra_charge=12.00),
+            VehicleClass(vehicle_class='Minivan', rent_charge=65.00, extra_charge=6.50),
+            VehicleClass(vehicle_class='Electric Car', rent_charge=75.00, extra_charge=7.50),
+            VehicleClass(vehicle_class='Hybrid', rent_charge=70.00, extra_charge=7.00),
+        ]
+        for i, v in enumerate(vehicle_class):
+            v.pk = i + 1
+            v.save()
+        print('*' * 10)
+        print('Created vehicle class')
+        print(VehicleClass.objects.all())
+
         office_location = [
             OfficeLocation(address_street='100 Market St', address_city='San Francisco', address_state='CA', address_zipcode='94105', phone='415-555-0100'),
             OfficeLocation(address_street='233 S Wacker Dr', address_city='Chicago', address_state='IL', address_zipcode='60606', phone='312-555-0200'),
@@ -187,31 +209,31 @@ class Command(BaseCommand):
         print(OfficeLocation.objects.all())
 
         coupon = [
-            Coupon(coupon_type='C', discount=25.00),
-            Coupon(coupon_type='C', discount=30.00),
-            Coupon(coupon_type='C', discount=35.00),
-            Coupon(coupon_type='C', discount=40.00),
-            Coupon(coupon_type='C', discount=45.00),
-            Coupon(coupon_type='C', discount=50.00),
-            Coupon(coupon_type='C', discount=55.00),
-            Coupon(coupon_type='C', discount=60.00),
-            Coupon(coupon_type='C', discount=65.00),
-            Coupon(coupon_type='C', discount=70.00),
-            Coupon(coupon_type='C', discount=75.00),
-            Coupon(coupon_type='C', discount=80.00),
-            Coupon(coupon_type='C', discount=85.00),
-            Coupon(coupon_type='C', discount=90.00),
-            Coupon(coupon_type='C', discount=95.00),
-            Coupon(coupon_type='I', discount=5.00),
-            Coupon(coupon_type='I', discount=10.00),
-            Coupon(coupon_type='I', discount=15.00),
-            Coupon(coupon_type='I', discount=5.00),
-            Coupon(coupon_type='I', discount=10.00),
-            Coupon(coupon_type='I', discount=15.00),
-            Coupon(coupon_type='I', discount=5.00),
-            Coupon(coupon_type='I', discount=10.00),
-            Coupon(coupon_type='I', discount=15.00),
-            Coupon(coupon_type='I', discount=20.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=25.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=30.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=35.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=40.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=45.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=50.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=55.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=60.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=65.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=70.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=75.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=80.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=85.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=90.00),
+            Coupon(code=get_random_string(5), coupon_type='C', discount=95.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=5.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=10.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=15.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=5.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=10.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=15.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=5.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=10.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=15.00),
+            Coupon(code=get_random_string(5), coupon_type='I', discount=20.00),
         ]
         for i, c in enumerate(coupon):
             c.pk = i + 1
@@ -332,20 +354,6 @@ class Command(BaseCommand):
         for i, p in enumerate(payment):
             p.pk = i + 1
             p.save()
-
-        vehicle_class = [
-            VehicleClass(vehicle_class='Sedan', rent_charge=50.00, extra_charge=5.00),
-            VehicleClass(vehicle_class='SUV', rent_charge=70.00, extra_charge=7.00),
-            VehicleClass(vehicle_class='Truck', rent_charge=80.00, extra_charge=8.00),
-            VehicleClass(vehicle_class='Compact Car', rent_charge=45.00, extra_charge=4.50),
-            VehicleClass(vehicle_class='Luxury Car', rent_charge=100.00, extra_charge=10.00),
-            VehicleClass(vehicle_class='Convertible', rent_charge=85.00, extra_charge=8.50),
-            VehicleClass(vehicle_class='Sports Car', rent_charge=120.00, extra_charge=12.00),
-            VehicleClass(vehicle_class='Minivan', rent_charge=65.00, extra_charge=6.50),
-            VehicleClass(vehicle_class='Electric Car', rent_charge=75.00, extra_charge=7.50),
-            VehicleClass(vehicle_class='Hybrid', rent_charge=70.00, extra_charge=7.00),
-        ]
-
 
         bookings = [
             Booking(pickup_date='2023-12-17', start_odo=10243, daily_limit=80, trip_status='P', pickup_location=OfficeLocation.objects.get(pk=3), dropoff_location=OfficeLocation.objects.get(pk=4), customer_id=User.objects.get(pk=9), vehicle_id=Vehicle.objects.get(pk=8), coupon_id=Coupon.objects.get(pk=2)),
