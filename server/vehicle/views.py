@@ -14,11 +14,16 @@ class VehicleAPI(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        start_date = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
-        end_date = datetime.strptime(request.data['end_date'], '%Y-%m-%d')
+        start_date = datetime.strptime(request.data['pickup_date'], '%Y-%m-%d')
+        end_date = datetime.strptime(request.data['dropoff_date'], '%Y-%m-%d')
         if end_date - start_date > timedelta(days=30):
             return Response({'message': 'Max booking days is 30!'}, status=status.HTTP_400_BAD_REQUEST)
-        query = (~Q(vehicle_bookings__pickup_date__range=[start_date, end_date], vehicle_bookings__dropoff_date__range=[start_date, end_date]))
+        query = (
+            ~Q(
+                vehicle_bookings__pickup_date__range=[start_date, end_date],
+                vehicle_bookings__dropoff_date__range=[start_date, end_date],
+            )
+        ) & Q(location_id__address_city=request.data["pickup_location"])
         if request.data.get('make'):
             query &= Q(make__in=request.data.get('make'))
         if request.data.get('model'):
