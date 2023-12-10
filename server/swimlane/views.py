@@ -1,9 +1,10 @@
 import random
 from datetime import datetime
-from django.utils import timezone
-import pytz # noqa
+
+import pytz  # noqa
 from django.conf import settings
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +13,8 @@ from rest_framework.views import APIView
 
 from users_management.models import UserType
 from users_management.serializer import UserSerializer
-from vehicle.models import Booking, PaymentStatus, TripStatus, Vehicle, OfficeLocation
+from vehicle.models import (Booking, OfficeLocation, PaymentStatus, TripStatus,
+                            Vehicle)
 from vehicle.serializer import BookingsSerializer
 
 from .models import (Corporation, Coupon, CouponCorporate, CouponIndividual,

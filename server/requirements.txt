@@ -10,3 +10,4 @@ django-cors-headers
 faker
 openai
 huey
+redis

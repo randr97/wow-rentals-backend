@@ -3,7 +3,6 @@ import string
 
 import openai
 
-
 openai.api_key = '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'
 
 

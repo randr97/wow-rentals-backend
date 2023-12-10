@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from .models import Booking, OfficeLocation, Vehicle, VehicleClass
 from swimlane.serializer import CouponSerializer, PaymentSerializer
+
+from .models import Booking, OfficeLocation, Vehicle, VehicleClass
 
 
 class OfficeLocationSerializer(serializers.ModelSerializer):

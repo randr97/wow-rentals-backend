@@ -1,16 +1,24 @@
+import logging
 from datetime import datetime, timedelta
+
 from django.conf import settings
+from huey import crontab
+from huey.contrib.djhuey import periodic_task
+
 from .models import Booking, PaymentStatus
-from .serializer import BookingsSerializer
-from background_task import background
 
 
-@background(schedule=30)
+logger = logging.getLogger()
+
+
+@periodic_task(crontab(minute='*/1'))
 def clear_stray_bookings():
-    data = BookingsSerializer(
-        Booking.objects.filter(
-            created_at__lt=(datetime.now() - timedelta(seconds=settings.PAYMENT_SESSION_TIME)),
-            payment_status=PaymentStatus.PENDING,
-        )
-    ).data
-    print(data)
+    bookings = Booking.objects.filter(
+        created_at__lt=(datetime.now() - timedelta(seconds=settings.PAYMENT_SESSION_TIME)),
+        payment_status=PaymentStatus.PENDING,
+    )
+    print("*" * 10)
+    print("Deleting these bookings")
+    print(list(bookings))
+    print("*" * 10)
+    bookings.delete()
