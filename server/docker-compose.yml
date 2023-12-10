@@ -10,8 +10,7 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
 
   db:
-    image: mysql:8.0
-    command: --plugin-load=group_replication.so --plugin-load=group_replication_communication.so --plugin-load=group_replication_sequential.so --plugin-load=rpl_semi_sync_master.so --plugin-load=rpl_semi_sync_slave.so --plugin-load=rpl_semi_sync_master_timeout.so --plugin-load=rpl_semi_sync_master_status.so --plugin-load=rpl_semi_sync_slave_status.so --plugin-load=gis.so
+    image: mysql:latest
     environment:
       MYSQL_DATABASE: dsr_wowdb
       MYSQL_USER: user

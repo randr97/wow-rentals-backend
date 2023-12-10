@@ -1,5 +1,6 @@
 import random
 from datetime import datetime
+from decimal import Decimal
 
 import pytz  # noqa
 from django.conf import settings
@@ -80,7 +81,7 @@ class PaymentView(APIView):
         return Response(
             {
                 "payment": PaymentSerializer(
-                    Payment.objects.filter(customer_id=request.user), many=True).data
+                    Payment.objects.filter(customer_id=request.user, is_valid=True), many=True).data
             }
         )
 
@@ -93,7 +94,9 @@ class PaymentView(APIView):
         return Response(sez.data, status=status.HTTP_200_OK)
 
     def delete(self, request):
-        Payment.objects.filter(customer_id=request.user, payment_id=request.GET["payment_id"]).delete()
+        pay = Payment.objects.get(customer_id=request.user, payment_id=request.GET["payment_id"])
+        pay.is_valid = False
+        pay.save()
         return Response({'message': 'Payment method deleted'}, status=status.HTTP_200_OK)
 
 
@@ -191,7 +194,8 @@ class BookView(viewsets.ViewSet):
             trip_status__in=[TripStatus.PENDING, TripStatus.ONGOING],
             payment_status=PaymentStatus.COMPLETE,
         )
-        booking.dropoff_location = request.data.get("dropoff_location") or booking.dropoff_location
+        if request.data.get("dropoff_location"):
+            booking.dropoff_location = OfficeLocation.objects.get(pk=request.data.get("dropoff_location"))
         if "payment_id" in request.data and Payment.objects.filter(
                 customer_id=request.user,
                 pk__in=request.data["payment_id"]).exists():
@@ -223,14 +227,14 @@ class BookView(viewsets.ViewSet):
             payment_status=PaymentStatus.COMPLETE,
         )
         booking.trip_status = TripStatus.COMPLETE
-        booking.end_odo = booking.start_odo + random.uniform(100, 1000)
+        booking.end_odo = booking.start_odo + Decimal(random.uniform(100, 1000))
         booking.save()
         return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
 
     def list_bookings(self, request):
         sez = BookingsSerializer(
             Booking.objects.filter(
-                customer_id=request.user, payment_status=PaymentStatus.COMPLETE).order_by('created_at'),
+                customer_id=request.user, payment_status=PaymentStatus.COMPLETE).order_by('pickup_date'),
             many=True,
         )
         return Response(sez.data, status=status.HTTP_200_OK)

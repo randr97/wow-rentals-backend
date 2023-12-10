@@ -123,7 +123,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dsr_wowdb',
         'USER': 'user',
         'PASSWORD': 'password',
@@ -329,3 +329,4 @@ STATE_CHOICES = [
 
 # Payment session time
 PAYMENT_SESSION_TIME = 30
+LOGIN_URL = '/user/login'

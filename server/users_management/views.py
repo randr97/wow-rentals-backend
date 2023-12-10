@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import (PasswordResetTokenGenerator,
+                                        default_token_generator)
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.shortcuts import redirect
@@ -45,7 +46,7 @@ class SignUpView(APIView):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         base_url = f"{request.scheme}://{get_current_site(request)}"
-        verification_link = f"{base_url}/user/verify/{uidb64}/{token}"
+        verification_link = f"{base_url}/api/user/verify/{uidb64}/{token}"
         subject = '[Wow Rentals] Verify Your Email'
         message = f'Click the following link to verify your email: {verification_link}'
         return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
@@ -66,6 +67,25 @@ class VerifyEmailView(APIView):
             user.is_active = True
             user.save()
         return redirect('/')
+
+
+class ForgotPasswordView(APIView):
+
+    permission_classes = [AllowAny] # noqa
+
+    def post(self, request):
+        user = User.objects.get(email=request.data['email'])
+        self.send_reset_email(request, user)
+        return Response({'message': 'Password reset email sent successfully!'}, status=status.HTTP_200_OK)
+
+    def send_reset_email(self, request, user):
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = PasswordResetTokenGenerator().make_token(user)
+        base_url = f"{request.scheme}://{get_current_site(request)}"
+        reset_link = f"{base_url}/user/reset-password/{uidb64}/{token}/"
+        subject = '[Wow Rentals] Password Reset'
+        message = f'Click the following link to reset your password: {reset_link}'
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
 
 
 class ProfileView(viewsets.ViewSet):

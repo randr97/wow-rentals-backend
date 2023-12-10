@@ -164,3 +164,13 @@ class Booking(models.Model):
             new_booking.save()
             new_booking.refresh_from_db()
             return new_booking
+
+
+class Invoice(models.Model):
+    invoice_id = models.BigAutoField(primary_key=True)
+    booking_id = models.OneToOneField(Booking, null=True, on_delete=models.SET_NULL)
+    bill_to_address = models.CharField(max_length=255, null=False, blank=False)
+    ship_to_address = models.CharField(max_length=255, null=False, blank=False)
+    dropoff_location = models.CharField(max_length=255, null=False, blank=False)
+    total = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    taxes = models.DecimalField(max_digits=10, decimal_places=2, null=False)
