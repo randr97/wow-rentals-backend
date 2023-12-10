@@ -11,3 +11,4 @@ faker
 openai
 huey
 redis
+uvicorn

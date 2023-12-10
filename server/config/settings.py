@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+from os import getenv
 from datetime import timedelta
 from pathlib import Path
 
@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-co=^5sq!7*uv2a5&mnm!(z00-_+k+cmg)=8d+jv!fbg^$n@-2t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv('WOWDEBUG', True)
 
 ALLOWED_HOSTS = []
 
@@ -125,13 +125,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dsr_wowdb',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'db',
+        'USER': getenv('PG_USER', 'user'),
+        'PASSWORD': getenv('PG_PASSWORD', 'password'),
+        'HOST': getenv('PG_HOST', 'db'),
         'PORT': '3306',
     }
 }
 
+print(f"Find me: {getenv('PG_HOST', 'db')}")
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
