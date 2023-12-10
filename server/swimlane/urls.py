@@ -15,4 +15,5 @@ urlpatterns = [
     path('booking/update/', BookView.as_view({'post': 'update_booking'}), name='booking-update'),
     path('booking/start/', BookView.as_view({'post': 'start_booking'}), name='booking-start'),
     path('booking/end/', BookView.as_view({'post': 'end_booking'}), name='booking-end'),
+    path('booking/', BookView.as_view({'get': 'list_bookings'}), name='booking-list'),
 ]

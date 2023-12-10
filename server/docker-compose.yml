@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
   db:
     image: mysql:8.0
     command: --plugin-load=group_replication.so --plugin-load=group_replication_communication.so --plugin-load=group_replication_sequential.so --plugin-load=rpl_semi_sync_master.so --plugin-load=rpl_semi_sync_slave.so --plugin-load=rpl_semi_sync_master_timeout.so --plugin-load=rpl_semi_sync_master_status.so --plugin-load=rpl_semi_sync_slave_status.so --plugin-load=gis.so
@@ -31,8 +39,10 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
     links:
       - db
+      - redis
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8000/healthcheck/"]
       interval: 60s

@@ -1,6 +1,8 @@
 import random
 from datetime import datetime
-
+from django.utils import timezone
+import pytz # noqa
+from django.conf import settings
 from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -10,7 +12,7 @@ from rest_framework.views import APIView
 
 from users_management.models import UserType
 from users_management.serializer import UserSerializer
-from vehicle.models import Booking, PaymentStatus, TripStatus
+from vehicle.models import Booking, PaymentStatus, TripStatus, Vehicle, OfficeLocation
 from vehicle.serializer import BookingsSerializer
 
 from .models import (Corporation, Coupon, CouponCorporate, CouponIndividual,
@@ -144,31 +146,34 @@ class BookView(viewsets.ViewSet):
     def pending_booking(self, request):
         try:
             booking = Booking(
-                vehicle_id=request.data["vehicle_id"],
-                customer_id=request.user.pk,
-                pickup_date=request.data["pickup_date"],
-                pickup_location=request.data["pickup_location"],
-                dropoff_date=request.data["dropoff_date"],
-                dropoff_location=request.data["dropoff_location"],
+                vehicle_id=Vehicle.objects.get(pk=request.data["vehicle_id"]),
+                customer_id=request.user,
+                pickup_date=datetime.strptime(request.data["pickup_date"], "%Y-%m-%d"),
+                pickup_location=OfficeLocation.objects.get(pk=request.data["pickup_location"]),
+                dropoff_date=datetime.strptime(request.data["dropoff_date"], "%Y-%m-%d"),
+                dropoff_location=OfficeLocation.objects.get(pk=request.data["dropoff_location"]),
             ).book_vehicle()
             return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
-        except ValueError:
-            return Response({'Vehicle already booked!'}, status=status.HTTP_403_FORBIDDEN)
+        except ValueError as e:
+            print(e)
+            return Response({'message': 'Bad Request!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def complete_booking(self, request):
         booking = Booking.objects.get(
             pk=request.data["booking_id"],
-            customer_id=request.user.pk,
+            customer_id=request.user,
             trip_status=TripStatus.PENDING,
             payment_status=PaymentStatus.PENDING,
         )
-        if "coupon_code" in request and coupon_is_valid(request):
+        if (timezone.now() - booking.created_at).total_seconds() >= settings.PAYMENT_SESSION_TIME:
+            return Response({'message': 'Booking session cancelled'}, status=status.HTTP_403_FORBIDDEN)
+        if "coupon_code" in request.data and coupon_is_valid(request):
             booking.coupon_id = Coupon.objects.get(coupon_code=request.data["coupon_code"]).pk
-        if Payment.objects.filter(customer_id=request.user.pk, pk__in=request.data["payment_id"]).exists():
+        if Payment.objects.filter(customer_id=request.user, pk__in=request.data["payment_id"]).exists():
             booking.payment_status = PaymentStatus.COMPLETE
             booking.payment.set(
                 Payment.objects.filter(
-                    customer_id=request.user.pk,
+                    customer_id=request.user,
                     pk__in=request.data["payment_id"]
                 )
             )
@@ -180,17 +185,17 @@ class BookView(viewsets.ViewSet):
     def update_booking(self, request):
         booking = Booking.objects.get(
             pk=request.data["booking_id"],
-            customer_id=request.user.pk,
+            customer_id=request.user,
             trip_status__in=[TripStatus.PENDING, TripStatus.ONGOING],
             payment_status=PaymentStatus.COMPLETE,
         )
         booking.dropoff_location = request.data.get("dropoff_location") or booking.dropoff_location
         if "payment_id" in request.data and Payment.objects.filter(
-                customer_id=request.user.pk,
+                customer_id=request.user,
                 pk__in=request.data["payment_id"]).exists():
 
             booking.payment.set(
-                Payment.objects.filter(customer_id=request.user.pk, pk__in=request.data["payment_id"])
+                Payment.objects.filter(customer_id=request.user, pk__in=request.data["payment_id"])
             )
         booking.save()
         booking.refresh_from_db()
@@ -199,7 +204,7 @@ class BookView(viewsets.ViewSet):
     def start_booking(self, request):
         booking = Booking.objects.get(
             pk=request.data["booking_id"],
-            customer_id=request.user.pk,
+            customer_id=request.user,
             trip_status__in=TripStatus.PENDING,
             payment_status=PaymentStatus.COMPLETE,
         )
@@ -211,7 +216,7 @@ class BookView(viewsets.ViewSet):
     def end_booking(self, request):
         booking = Booking.objects.get(
             pk=request.data["booking_id"],
-            customer_id=request.user.pk,
+            customer_id=request.user,
             trip_status__in=TripStatus.ONGOING,
             payment_status=PaymentStatus.COMPLETE,
         )
@@ -219,3 +224,11 @@ class BookView(viewsets.ViewSet):
         booking.end_odo = booking.start_odo + random.uniform(100, 1000)
         booking.save()
         return Response(BookingsSerializer(booking).data, status=status.HTTP_200_OK)
+
+    def list_bookings(self, request):
+        sez = BookingsSerializer(
+            Booking.objects.filter(
+                customer_id=request.user, payment_status=PaymentStatus.COMPLETE).order_by('created_at'),
+            many=True,
+        )
+        return Response(sez.data, status=status.HTTP_200_OK)

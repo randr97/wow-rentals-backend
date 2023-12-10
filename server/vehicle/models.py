@@ -60,8 +60,9 @@ class Vehicle(models.Model):
     vin_number = models.CharField(max_length=100, null=False, blank=False)
     license_plate_number = models.CharField(max_length=100, null=False, blank=False)
     make_year = models.DateField(null=False, blank=False)
-
     odo = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
+    rating = models.IntegerField(default=4, null=False, blank=False)
+    description = models.CharField(max_length=255, null=False, blank=False)
 
     def __str__(self):
         return f"{self.make}-{self.model}"
@@ -93,7 +94,7 @@ class Booking(models.Model):
     coupon_id = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, related_name='user_coupons')
 
     payment_status = models.CharField(max_length=1, choices=PaymentStatus.choices, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now=True, null=False, blank=False)
     payment = models.ManyToManyField(Payment, related_name='paid_bookings')
 
     class Meta:
@@ -132,14 +133,14 @@ class Booking(models.Model):
                 pickup_date__lte=self.pickup_date,
                 next_available_date__gt=self.pickup_date,
                 payment_status=PaymentStatus.PENDING,
-                created_at__gt=(datetime.now() - timedelta(minutes=5)),
+                created_at__gt=(datetime.now() - timedelta(seconds=settings.PAYMENT_SESSION_TIME)),
             )
             query |= models.Q(
                 vehicle_id=self.vehicle_id,
                 pickup_date__lte=self.dropoff_date,
                 next_available_date__gt=self.dropoff_date,
                 payment_status=PaymentStatus.PENDING,
-                created_at__gt=(datetime.now() - timedelta(minutes=5)),
+                created_at__gt=(datetime.now() - timedelta(seconds=settings.PAYMENT_SESSION_TIME)),
             )
             existing_bookings = Booking.objects.filter(query).exclude(
                 booking_id=self.booking_id
@@ -151,13 +152,14 @@ class Booking(models.Model):
             # Create a new booking with 'pending_payment' status
             new_booking = Booking(
                 customer_id=self.customer_id,
-                vehicle_id=self.vehicle,
+                vehicle_id=self.vehicle_id,
                 pickup_date=self.pickup_date,
                 dropoff_date=self.dropoff_date,
                 pickup_location=self.pickup_location,
                 dropoff_location=self.dropoff_location,
                 payment_status=PaymentStatus.PENDING,
                 trip_status=TripStatus.PENDING,
+                daily_limit=100,
             )
             new_booking.save()
             new_booking.refresh_from_db()

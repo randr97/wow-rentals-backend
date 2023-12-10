@@ -8,3 +8,5 @@ django-extensions
 django-health-check
 django-cors-headers
 faker
+openai
+huey
