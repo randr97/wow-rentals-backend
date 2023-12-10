@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.tokens import (PasswordResetTokenGenerator,
                                         default_token_generator)
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.shortcuts import redirect
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -49,7 +49,27 @@ class SignUpView(APIView):
         verification_link = f"{base_url}/api/user/verify/{uidb64}/{token}"
         subject = '[Wow Rentals] Verify Your Email'
         message = f'Click the following link to verify your email: {verification_link}'
-        return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
+        message2 = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+        </head>
+        <body>
+            <div style="text-align: center; padding: 20px;">
+                <h2>Email Verification</h2>
+                <p>Thank you for signing up! Click the button below to verify your email:</p>
+                <a href="{verification_link}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 5px;">Verify Email</a>
+            </div>
+        </body>
+        </html>
+        """
+        print(message2)
+        headers = {'X-Mailer': 'NO-PREFETCH', 'Precedence': 'bulk'}
+        e = EmailMessage(subject, message, settings.EMAIL_HOST_USER, [user.email], headers=headers)
+        return e.send()
 
 
 class VerifyEmailView(APIView):

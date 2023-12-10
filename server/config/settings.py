@@ -24,9 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-co=^5sq!7*uv2a5&mnm!(z00-_+k+cmg)=8d+jv!fbg^$n@-2t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv('WOWDEBUG', True)
+DEBUG = getenv('WOWDEBUG', False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'wowdb-ui-onhsmaymgq-uc.a.run.app',
+    'wowrentals.app',
+    'wowdb-api-onhsmaymgq-uc.a.run.app',
+]
 
 
 if DEBUG:
@@ -41,6 +46,7 @@ INSTALLED_APPS = [
     'swimlane',
     'vehicle',
     # 3rd party
+    'corsheaders',
     'django_extensions',
     'health_check',
     'huey.contrib.djhuey',
@@ -53,9 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-if DEBUG:
-    INSTALLED_APPS += ['corsheaders']
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -64,15 +67,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
-if DEBUG:
-    MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware']
-    CORS_ALLOWED_ORIGINS = [
-        # "http://*",
-        # "https://*",
-        "http://localhost:4200",
-    ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://wowdb-ui-onhsmaymgq-uc.a.run.app",
+    "https://wowrentals.app",
+    "http://wowdb-ui-onhsmaymgq-uc.a.run.app",
+    "http://wowrentals.app",
+    "https://wowdb-api-onhsmaymgq-uc.a.run.app",
+    "http://wowdb-api-onhsmaymgq-uc.a.run.app",
+]
 
 
 REST_FRAMEWORK = {
@@ -131,8 +137,6 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
-print(f"Find me: {getenv('PG_HOST', 'db')}")
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
