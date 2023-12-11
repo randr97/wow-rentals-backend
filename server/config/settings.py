@@ -339,5 +339,5 @@ STATE_CHOICES = [
 ]
 
 # Payment session time
-PAYMENT_SESSION_TIME = 30
+PAYMENT_SESSION_TIME = 65
 LOGIN_URL = '/user/login'
