@@ -6,8 +6,8 @@ CREATE TRIGGER after_booking_update AFTER UPDATE ON vehicle_booking
 FOR EACH ROW
 BEGIN
     DECLARE invoice_amount DECIMAL(10, 2);
-    DECLARE coupon_discount DECIMAL(5, 2);
-    DECLARE goods_and_services_tax DECIMAL(5, 2);
+    DECLARE coupon_discount DECIMAL(10, 2);
+    DECLARE goods_and_services_tax DECIMAL(10, 2);
     DECLARE bill_to_address VARCHAR(255);
     DECLARE ship_to_address VARCHAR(255);
     DECLARE new_rent_charge DECIMAL(10, 2);
@@ -47,7 +47,7 @@ BEGIN
         FROM swimlane_coupon
         WHERE coupon_id = NEW.coupon_id_id;
 
-        SET invoice_amount = invoice_amount - (invoice_amount * IFNULL(coupon_discount, 0));
+        SET invoice_amount = invoice_amount - (invoice_amount * IFNULL(coupon_discount, 0) / 100);
 
         -- Calculate goods and services tax
         SET goods_and_services_tax = invoice_amount * 0.18;

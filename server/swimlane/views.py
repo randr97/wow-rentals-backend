@@ -39,7 +39,9 @@ class HomeView(viewsets.ViewSet):
             "individual_customer": CustomerIndividualSerializer(CustomerIndividual.objects.filter(customer_id=request.user), many=True).data,
             "corporate_customer": CustomerCorporateSerializer(CustomerCorporate.objects.filter(customer_id=request.user), many=True).data,
             "user": UserSerializer(request.user).data,
-            "payment": PaymentSerializer(Payment.objects.filter(customer_id=request.user.pk), many=True).data,
+            "payment": PaymentSerializer(
+                Payment.objects.filter(customer_id=request.user.pk, is_valid=True), many=True
+            ).data,
         }
         return Response(data=resp, status=status.HTTP_200_OK)
 

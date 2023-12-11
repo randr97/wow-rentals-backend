@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
 from os import getenv
 from datetime import timedelta
 from pathlib import Path
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-co=^5sq!7*uv2a5&mnm!(z00-_+k+cmg)=8d+jv!fbg^$n@-2t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv('WOWDEBUG', False)
+DEBUG = getenv('WOWDEBUG', True)
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -78,6 +79,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://wowrentals.app",
     "https://wowdb-api-onhsmaymgq-uc.a.run.app",
     "http://wowdb-api-onhsmaymgq-uc.a.run.app",
+    "http://localhost:4200",
 ]
 
 
@@ -175,6 +177,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
