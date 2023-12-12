@@ -2,6 +2,8 @@ from django.core.validators import URLValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from django.core.validators import MaxValueValidator
+
 from users_management.models import User
 
 
@@ -70,13 +72,25 @@ class Coupon(models.Model):
     coupon_id = models.BigAutoField(primary_key=True, null=False, blank=False)
     coupon_code = models.CharField(max_length=10, unique=True, null=False, blank=False)
     coupon_type = models.CharField(null=False, blank=False, max_length=1, choices=CouponChoice.choices)
-    discount = models.DecimalField(max_digits=5, decimal_places=2, null=False, blank=False)
+    discount = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=False,
+        blank=False,
+        validators=[MaxValueValidator(100)]
+    )
     is_valid = models.BooleanField(null=False, blank=False)
 
     class Meta:
         indexes = [
             models.Index(fields=['coupon_code']),
             models.Index(fields=['coupon_id', 'coupon_code']),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(coupon_type__in=[i[0] for i in CouponChoice.choices]),
+                name='ch_inh_dsr_coupon'
+            )
         ]
 
     def __str__(self):
@@ -87,6 +101,11 @@ class CouponIndividual(models.Model):
     coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE, related_name='individual_coupon')
     valid_from = models.DateField(null=False, blank=False)
     valid_to = models.DateField(null=False, blank=False)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(valid_to__gte=models.F('valid_from')), name='dsr_coupon_indiv_chk_date'),
+        ]
 
     def __str__(self):
         return f"[{self.coupon_id}] {self.valid_from} {self.valid_to}"

@@ -103,6 +103,20 @@ class Booking(models.Model):
             models.Index(fields=['vehicle_id', 'dropoff_date']),
             models.Index(fields=['vehicle_id', 'next_available_date']),
         ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(end_odo__gt=models.F('start_odo')),
+                name='dsr_booking_chk_odo'
+            ),
+            models.CheckConstraint(
+                check=models.Q(dropoff_date__gt=models.F('pickup_date')),
+                name='dsr_booking_chk_service_date'
+            ),
+            models.CheckConstraint(
+                check=models.Q(trip_status__in=[i[0] for i in TripStatus.choices]),
+                name='dsr_booking_chk_service_status'
+            ),
+        ]
 
     def __str__(self):
         return str(self.booking_id)

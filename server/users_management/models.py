@@ -61,5 +61,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         'address_street', 'address_city', 'address_state', 'address_zipcode'
     ]
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(user_type__in=[i[0] for i in UserType.choices]),
+                name='ch_inh_dsr_customer'
+            )
+        ]
+
     def __str__(self):
         return self.email
