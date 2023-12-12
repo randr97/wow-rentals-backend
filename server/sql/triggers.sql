@@ -44,10 +44,10 @@ BEGIN
 
         -- Calculate the total amount based on your logic
         SET invoice_amount = (
-            (DATEDIFF(NEW.dropoff_date, NEW.pickup_date) * new_rent_charge) +
+            ((DATEDIFF(NEW.dropoff_date, NEW.pickup_date) + 1) * new_rent_charge) +
             (
                 GREATEST(
-                    (NEW.end_odo - NEW.start_odo) - (DATEDIFF(NEW.dropoff_date, NEW.pickup_date) * NEW.daily_limit),
+                    (NEW.end_odo - NEW.start_odo) - ((DATEDIFF(NEW.dropoff_date, NEW.pickup_date) + 1) * NEW.daily_limit),
                     0
                 ) * new_extra_charge
             )

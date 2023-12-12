@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (TokenBlacklistView,
                                             TokenObtainPairView,
                                             TokenRefreshView)
 
-from .views import ProfileView, SignUpView, VerifyEmailView, ForgotPasswordView
+from .views import ForgotPasswordView, ProfileView, SignUpView, VerifyEmailView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),

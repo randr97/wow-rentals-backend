@@ -1,13 +1,13 @@
 import random
-from decimal import Decimal
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 from django.core.management.base import BaseCommand
 from faker import Faker
 
+from swimlane.models import Coupon, CouponCorporate, CouponIndividual, Payment
 from users_management.models import User
 from vehicle.models import Booking, OfficeLocation, Vehicle
-from swimlane.models import Coupon, CouponCorporate, CouponIndividual, Payment
 
 
 class Command(BaseCommand):

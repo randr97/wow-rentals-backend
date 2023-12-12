@@ -1,7 +1,9 @@
 import random
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 from django.core.management.base import BaseCommand
+from faker import Faker
 
 from swimlane.models import (Corporation, Coupon, CouponCorporate,
                              CouponIndividual, CustomerCorporate,
@@ -19,6 +21,9 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        # faker
+        fake = Faker()
+
         # Dummy user creations
         users = [
             User(customer_id=1, is_active=True, user_type='I', first_name='Ava', last_name='Williams', email='ava.williams@hotmail.com', phone='555-1001', address_street='101 Maple Dr', address_city='Austin', address_state='TX', address_zipcode='73301'),
@@ -75,7 +80,8 @@ class Command(BaseCommand):
                     "address_street": "544 Bay-ridge Pkwy",
                     "address_city": "Brooklyn",
                     "address_state": "NY",
-                    "address_zipcode": "11209"
+                    "address_zipcode": "11209",
+                    "user_type": "I",
                 }
 
         u = User(is_superuser=True, is_staff=True, **admin)
@@ -147,9 +153,6 @@ class Command(BaseCommand):
             CustomerIndividual(customer_id=User.objects.get(pk=18), dl_number='DL55555518', insurance_company='Nationwide', insurance_policy_no='POLICY55518'),
             CustomerIndividual(customer_id=User.objects.get(pk=19), dl_number='DL77777719', insurance_company='USAA', insurance_policy_no='POLICY77719'),
             CustomerIndividual(customer_id=User.objects.get(pk=20), dl_number='DL99999920', insurance_company='Travelers', insurance_policy_no='POLICY99920'),
-            CustomerIndividual(customer_id=User.objects.get(pk=21), dl_number='DL12345621', insurance_company='American Family Insurance', insurance_policy_no='POLICY12321'),
-            CustomerIndividual(customer_id=User.objects.get(pk=22), dl_number='DL78901222', insurance_company='Erie Insurance', insurance_policy_no='POLICY45622'),
-            CustomerIndividual(customer_id=User.objects.get(pk=23), dl_number='DL34567823', insurance_company='State Farm', insurance_policy_no='POLICY78923'),
         ]
         for i, ci in enumerate(cust_indv):
             ci.pk = i + 1
@@ -175,30 +178,30 @@ class Command(BaseCommand):
         print(VehicleClass.objects.all())
 
         office_location = [
-            OfficeLocation(address_street='100 Market St', address_city='San Francisco', address_state='CA', address_zipcode='94105', phone='415-555-0100'),
-            OfficeLocation(address_street='233 S Wacker Dr', address_city='Chicago', address_state='IL', address_zipcode='60606', phone='312-555-0200'),
             OfficeLocation(address_street='350 5th Ave', address_city='New York', address_state='NY', address_zipcode='10118', phone='212-555-0300'),
-            OfficeLocation(address_street='600 Congress Ave', address_city='Austin', address_state='TX', address_zipcode='78701', phone='512-555-0400'),
-            OfficeLocation(address_street='400 Broad St', address_city='Seattle', address_state='WA', address_zipcode='98109', phone='206-555-0500'),
-            OfficeLocation(address_street='1300 Pennsylvania Ave NW', address_city='Washington', address_state='DC', address_zipcode='20004', phone='202-555-0600'),
-            OfficeLocation(address_street='150 2nd Ave N', address_city='Nashville', address_state='TN', address_zipcode='37201', phone='615-555-0700'),
-            OfficeLocation(address_street='601 Biscayne Blvd', address_city='Miami', address_state='FL', address_zipcode='33132', phone='305-555-0800'),
-            OfficeLocation(address_street='100 Universal City Plaza', address_city='Los Angeles', address_state='CA', address_zipcode='91608', phone='818-555-0900'),
-            OfficeLocation(address_street='4200 Conroy Rd', address_city='Orlando', address_state='FL', address_zipcode='32839', phone='407-555-1000'),
-            OfficeLocation(address_street='800 Bagby St', address_city='Houston', address_state='TX', address_zipcode='77002', phone='713-555-1100'),
-            OfficeLocation(address_street='45 Ivan Allen Jr Blvd NW', address_city='Atlanta', address_state='GA', address_zipcode='30308', phone='404-555-1200'),
-            OfficeLocation(address_street='1 Cardinals Dr', address_city='Glendale', address_state='AZ', address_zipcode='85305', phone='623-555-1300'),
-            OfficeLocation(address_street='800 Elysian Park Ave', address_city='Los Angeles', address_state='CA', address_zipcode='90012', phone='213-555-1400'),
             OfficeLocation(address_street='100 Legends Way', address_city='Boston', address_state='MA', address_zipcode='02114', phone='617-555-1500'),
-            OfficeLocation(address_street='401 Biscayne Blvd', address_city='Miami', address_state='FL', address_zipcode='33132', phone='305-555-1600'),
-            OfficeLocation(address_street='1510 Polk St', address_city='Houston', address_state='TX', address_zipcode='77002', phone='713-555-1700'),
             OfficeLocation(address_street='700 Penn St', address_city='Philadelphia', address_state='PA', address_zipcode='19130', phone='215-555-1800'),
-            OfficeLocation(address_street='2655 Richmond Ave', address_city='Staten Island', address_state='NY', address_zipcode='10314', phone='718-555-1900'),
-            OfficeLocation(address_street='333 W Camden St', address_city='Baltimore', address_state='MD', address_zipcode='21201', phone='410-555-2000'),
-            OfficeLocation(address_street='501 Crawford St', address_city='Houston', address_state='TX', address_zipcode='77002', phone='713-555-2100'),
-            OfficeLocation(address_street='1500 Sugar Bowl Dr', address_city='New Orleans', address_state='LA', address_zipcode='70112', phone='504-555-2200'),
-            OfficeLocation(address_street='1265 Lombardi Ave', address_city='Green Bay', address_state='WI', address_zipcode='54304', phone='920-555-2300'),
-            OfficeLocation(address_street='1 Titans Way', address_city='Nashville', address_state='TN', address_zipcode='37213', phone='615-555-2400'),
+            OfficeLocation(address_street='100 Market St', address_city='San Francisco', address_state='CA', address_zipcode='94105', phone='415-555-0100'),
+            # OfficeLocation(address_street='233 S Wacker Dr', address_city='Chicago', address_state='IL', address_zipcode='60606', phone='312-555-0200'),
+            # OfficeLocation(address_street='600 Congress Ave', address_city='Austin', address_state='TX', address_zipcode='78701', phone='512-555-0400'),
+            # OfficeLocation(address_street='400 Broad St', address_city='Seattle', address_state='WA', address_zipcode='98109', phone='206-555-0500'),
+            # OfficeLocation(address_street='1300 Pennsylvania Ave NW', address_city='Washington', address_state='DC', address_zipcode='20004', phone='202-555-0600'),
+            # OfficeLocation(address_street='150 2nd Ave N', address_city='Nashville', address_state='TN', address_zipcode='37201', phone='615-555-0700'),
+            # OfficeLocation(address_street='601 Biscayne Blvd', address_city='Miami', address_state='FL', address_zipcode='33132', phone='305-555-0800'),
+            # OfficeLocation(address_street='100 Universal City Plaza', address_city='Los Angeles', address_state='CA', address_zipcode='91608', phone='818-555-0900'),
+            # OfficeLocation(address_street='4200 Conroy Rd', address_city='Orlando', address_state='FL', address_zipcode='32839', phone='407-555-1000'),
+            # OfficeLocation(address_street='800 Bagby St', address_city='Houston', address_state='TX', address_zipcode='77002', phone='713-555-1100'),
+            # OfficeLocation(address_street='45 Ivan Allen Jr Blvd NW', address_city='Atlanta', address_state='GA', address_zipcode='30308', phone='404-555-1200'),
+            # OfficeLocation(address_street='1 Cardinals Dr', address_city='Glendale', address_state='AZ', address_zipcode='85305', phone='623-555-1300'),
+            # OfficeLocation(address_street='800 Elysian Park Ave', address_city='Los Angeles', address_state='CA', address_zipcode='90012', phone='213-555-1400'),
+            # OfficeLocation(address_street='401 Biscayne Blvd', address_city='Miami', address_state='FL', address_zipcode='33132', phone='305-555-1600'),
+            # OfficeLocation(address_street='1510 Polk St', address_city='Houston', address_state='TX', address_zipcode='77002', phone='713-555-1700'),
+            # OfficeLocation(address_street='2655 Richmond Ave', address_city='Staten Island', address_state='NY', address_zipcode='10314', phone='718-555-1900'),
+            # OfficeLocation(address_street='333 W Camden St', address_city='Baltimore', address_state='MD', address_zipcode='21201', phone='410-555-2000'),
+            # OfficeLocation(address_street='501 Crawford St', address_city='Houston', address_state='TX', address_zipcode='77002', phone='713-555-2100'),
+            # OfficeLocation(address_street='1500 Sugar Bowl Dr', address_city='New Orleans', address_state='LA', address_zipcode='70112', phone='504-555-2200'),
+            # OfficeLocation(address_street='1265 Lombardi Ave', address_city='Green Bay', address_state='WI', address_zipcode='54304', phone='920-555-2300'),
+            # OfficeLocation(address_street='1 Titans Way', address_city='Nashville', address_state='TN', address_zipcode='37213', phone='615-555-2400'),
         ]
         for i, ol in enumerate(office_location):
             ol.pk = i + 1
@@ -282,7 +285,7 @@ class Command(BaseCommand):
             v.rating = int(random.uniform(1.7, 5))
             # v.description = get_text_from_ai(f'{v.make}, {v.model}')
             v.odo = random.uniform(10000, 100000)
-            v.location_id = OfficeLocation.objects.get(pk=int(random.uniform(1, 23)))
+            v.location_id = OfficeLocation.objects.get(pk=int(random.uniform(1, 4)))
             # v.class_id = get_vehicle_class_from_ai(f'{v.make}, {v.model}')
             v.save()
 
@@ -361,46 +364,41 @@ class Command(BaseCommand):
             p.pk = i + 1
             p.save()
 
-        bookings = [
-            Booking(pickup_date='2023-12-17', start_odo=10243, daily_limit=80, trip_status='P', customer_id=User.objects.get(pk=9), vehicle_id=Vehicle.objects.get(pk=8), coupon_id=Coupon.objects.get(pk=2)),
-            Booking(pickup_date='2023-11-11', start_odo=15600, daily_limit=70, trip_status='C', customer_id=User.objects.get(pk=2), vehicle_id=Vehicle.objects.get(pk=10), coupon_id=Coupon.objects.get(pk=16)),
-            Booking(pickup_date='2023-09-30', start_odo=13005, daily_limit=65, trip_status='P', customer_id=User.objects.get(pk=1), vehicle_id=Vehicle.objects.get(pk=1), coupon_id=Coupon.objects.get(pk=18)),
-            Booking(pickup_date='2023-10-15', start_odo=21000, daily_limit=75, trip_status='C', customer_id=User.objects.get(pk=20), vehicle_id=Vehicle.objects.get(pk=12), coupon_id=Coupon.objects.get(pk=19)),
-            Booking(pickup_date='2023-08-20', start_odo=17890, daily_limit=80, trip_status='P', customer_id=User.objects.get(pk=15), vehicle_id=Vehicle.objects.get(pk=7), coupon_id=Coupon.objects.get(pk=17)),
-            Booking(pickup_date='2023-07-12', start_odo=15020, daily_limit=72, trip_status='C', customer_id=User.objects.get(pk=24), vehicle_id=Vehicle.objects.get(pk=15), coupon_id=Coupon.objects.get(pk=3)),
-            Booking(pickup_date='2023-06-05', start_odo=16340, daily_limit=78, trip_status='P', customer_id=User.objects.get(pk=22), vehicle_id=Vehicle.objects.get(pk=14), coupon_id=Coupon.objects.get(pk=1)),
-            Booking(pickup_date='2023-05-17', start_odo=17430, daily_limit=70, trip_status='C', customer_id=User.objects.get(pk=28), vehicle_id=Vehicle.objects.get(pk=9), coupon_id=Coupon.objects.get(pk=5)),
-            Booking(pickup_date='2023-04-09', start_odo=18900, daily_limit=68, trip_status='P', customer_id=User.objects.get(pk=18), vehicle_id=Vehicle.objects.get(pk=11), coupon_id=Coupon.objects.get(pk=20)),
-            Booking(pickup_date='2023-03-22', start_odo=20210, daily_limit=64, trip_status='C', customer_id=User.objects.get(pk=35), vehicle_id=Vehicle.objects.get(pk=13), coupon_id=Coupon.objects.get(pk=7)),
-            Booking(pickup_date='2023-02-28', start_odo=13650, daily_limit=80, trip_status='P', customer_id=User.objects.get(pk=38), vehicle_id=Vehicle.objects.get(pk=17), coupon_id=Coupon.objects.get(pk=9)),
-            Booking(pickup_date='2023-01-18', start_odo=14500, daily_limit=65, trip_status='C', customer_id=User.objects.get(pk=4), vehicle_id=Vehicle.objects.get(pk=18), coupon_id=Coupon.objects.get(pk=22)),
-            Booking(pickup_date='2023-07-23', start_odo=15900, daily_limit=75, trip_status='P', customer_id=User.objects.get(pk=11), vehicle_id=Vehicle.objects.get(pk=19), coupon_id=Coupon.objects.get(pk=24)),
-            Booking(pickup_date='2023-10-11', start_odo=16600, daily_limit=70, trip_status='C', customer_id=User.objects.get(pk=33), vehicle_id=Vehicle.objects.get(pk=20), coupon_id=Coupon.objects.get(pk=4)),
-            Booking(pickup_date='2023-09-05', start_odo=17700, daily_limit=68, trip_status='P', customer_id=User.objects.get(pk=37), vehicle_id=Vehicle.objects.get(pk=21), coupon_id=Coupon.objects.get(pk=6)),
-            Booking(pickup_date='2023-08-15', start_odo=13200, daily_limit=72, trip_status='C', customer_id=User.objects.get(pk=5), vehicle_id=Vehicle.objects.get(pk=22), coupon_id=Coupon.objects.get(pk=21)),
-            Booking(pickup_date='2023-12-12', start_odo=14800, daily_limit=77, trip_status='P', customer_id=User.objects.get(pk=14), vehicle_id=Vehicle.objects.get(pk=23), coupon_id=Coupon.objects.get(pk=23)),
-            Booking(pickup_date='2024-01-07', start_odo=16040, daily_limit=80, trip_status='C', customer_id=User.objects.get(pk=19), vehicle_id=Vehicle.objects.get(pk=24), coupon_id=Coupon.objects.get(pk=25)),
-            Booking(pickup_date='2024-03-21', start_odo=17530, daily_limit=73, trip_status='P', customer_id=User.objects.get(pk=30), vehicle_id=Vehicle.objects.get(pk=25), coupon_id=Coupon.objects.get(pk=8)),
-            Booking(pickup_date='2024-02-14', start_odo=19020, daily_limit=75, trip_status='C', customer_id=User.objects.get(pk=32), vehicle_id=Vehicle.objects.get(pk=26), coupon_id=Coupon.objects.get(pk=10)),
-            Booking(pickup_date='2024-04-10', start_odo=20410, daily_limit=78, trip_status='P', customer_id=User.objects.get(pk=13), vehicle_id=Vehicle.objects.get(pk=27), coupon_id=Coupon.objects.get(pk=11)),
-            Booking(pickup_date='2024-05-18', start_odo=21800, daily_limit=82, trip_status='C', customer_id=User.objects.get(pk=26), vehicle_id=Vehicle.objects.get(pk=28), coupon_id=Coupon.objects.get(pk=12)),
-            Booking(pickup_date='2024-06-22', start_odo=23100, daily_limit=85, trip_status='P', customer_id=User.objects.get(pk=40), vehicle_id=Vehicle.objects.get(pk=29), coupon_id=Coupon.objects.get(pk=13)),
-            Booking(pickup_date='2024-07-09', start_odo=24400, daily_limit=88, trip_status='C', customer_id=User.objects.get(pk=31), vehicle_id=Vehicle.objects.get(pk=30), coupon_id=Coupon.objects.get(pk=14)),
-            Booking(pickup_date='2024-08-03', start_odo=25700, daily_limit=91, trip_status='P', customer_id=User.objects.get(pk=36), vehicle_id=Vehicle.objects.get(pk=31), coupon_id=Coupon.objects.get(pk=15)),
-            Booking(pickup_date='2024-09-16', start_odo=27000, daily_limit=94, trip_status='C', customer_id=User.objects.get(pk=23), vehicle_id=Vehicle.objects.get(pk=32), coupon_id=Coupon.objects.get(pk=1)),
-            Booking(pickup_date='2024-10-25', start_odo=28300, daily_limit=67, trip_status='P', customer_id=User.objects.get(pk=12), vehicle_id=Vehicle.objects.get(pk=33), coupon_id=Coupon.objects.get(pk=2)),
-            Booking(pickup_date='2024-11-30', start_odo=29600, daily_limit=71, trip_status='C', customer_id=User.objects.get(pk=10), vehicle_id=Vehicle.objects.get(pk=34), coupon_id=Coupon.objects.get(pk=3)),
-            Booking(pickup_date='2024-12-12', start_odo=30900, daily_limit=69, trip_status='P', customer_id=User.objects.get(pk=8), vehicle_id=Vehicle.objects.get(pk=16), coupon_id=Coupon.objects.get(pk=4)),
-            Booking(pickup_date='2025-01-07', start_odo=32200, daily_limit=72, trip_status='C', customer_id=User.objects.get(pk=3), vehicle_id=Vehicle.objects.get(pk=2), coupon_id=Coupon.objects.get(pk=5)),
-        ]
-        for i, b in enumerate(bookings):
-            b.dropoff_date = datetime.strptime(b.pickup_date, '%Y-%m-%d') + timedelta(days=int(random.uniform(1, 9)))
-            b.pickup_date = datetime.strptime(b.pickup_date, '%Y-%m-%d')
-            b.pickup_location = b.vehicle_id.location_id
-            b.dropoff_location = OfficeLocation.objects.get(pk=int(random.uniform(1, 23)))
-            b.pk = i + 1
+        vehicles = [v.pk for v in Vehicle.objects.all()]
+        offices = [o.pk for o in OfficeLocation.objects.all()]
+        users = []
+        for u in User.objects.all():
+            if Payment.objects.filter(customer_id=u.customer_id).exists():
+                users.append(u.pk)
+        # corp_coupon = [c.pk for c in CouponCorporate.objects.all()]
+        inv_coupon = [c.pk for c in CouponIndividual.objects.filter(valid_to__gt=datetime.now())]
+
+        for i in range(5000):
+            print(i)
+            v = Vehicle.objects.get(pk=random.choice(vehicles))
+            b = Booking(
+                pk=i + 100000,
+                pickup_date=fake.date_between_dates(date_start=datetime(2020, 1, 1), date_end=datetime(2023, 10, 1)),
+                pickup_location=v.location_id,
+                dropoff_location=OfficeLocation.objects.get(pk=random.choice([v.location_id.pk] * 10 + offices)),
+                start_odo=v.odo,
+                end_odo=v.odo + Decimal(random.uniform(100, 1000)),
+                daily_limit=100,
+                trip_status='O',
+                customer_id=User.objects.get(pk=random.choice(users)),
+                vehicle_id=v,
+                coupon_id=None,
+            )
+            if b.customer_id.user_type == 'C':
+                b.coupon_id = None
+            else:
+                b.coupon_id = Coupon.objects.get(pk=random.choice(inv_coupon))
+            b.dropoff_date = b.pickup_date + timedelta(days=int(random.uniform(1, 9)))
+            b.save()
+            b.payment.set(Payment.objects.filter(customer_id=b.customer_id.pk))
+            b.trip_status = 'C'
             b.save()
 
         self.stdout.write(
-            self.style.SUCCESS('DB setup successful')
+            self.style.SUCCESS('Booking bulk created')
         )

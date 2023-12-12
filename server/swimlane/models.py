@@ -1,8 +1,6 @@
-from django.core.validators import URLValidator
+from django.core.validators import MaxValueValidator, URLValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from django.core.validators import MaxValueValidator
 
 from users_management.models import User
 

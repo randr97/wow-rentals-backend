@@ -1,6 +1,8 @@
 from datetime import datetime
-from django.db.models import Q
+
 from django.core.management.base import BaseCommand
+from django.db.models import Q
+
 from vehicle.models import PaymentStatus, Vehicle
 
 
