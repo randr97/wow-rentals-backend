@@ -342,5 +342,3 @@ STATE_CHOICES = [
 PAYMENT_SESSION_TIME = 65
 LOGIN_URL = '/user/login'
 HOST_URL = 'https://wowdb-ui-onhsmaymgq-uc.a.run.app'
-if DEBUG:
-    HOST_URL = 'http://localhost:4200'
