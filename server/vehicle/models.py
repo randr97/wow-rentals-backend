@@ -63,6 +63,7 @@ class Vehicle(models.Model):
     odo = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     rating = models.IntegerField(default=4, null=False, blank=False)
     description = models.CharField(max_length=255, null=False, blank=False)
+    url = models.CharField(max_length=255, null=False, blank=False)
 
     def __str__(self):
         return f"{self.make}-{self.model}"

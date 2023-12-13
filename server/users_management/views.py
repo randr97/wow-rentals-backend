@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.tokens import (PasswordResetTokenGenerator,
                                         default_token_generator)
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage, send_mail
-from django.shortcuts import redirect
+from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status, viewsets
@@ -45,11 +43,9 @@ class SignUpView(APIView):
     def send_verification_email(self, request, user):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        base_url = f"{request.scheme}://{get_current_site(request)}"
-        verification_link = f"{base_url}/api/user/verify/{uidb64}/{token}"
+        verification_link = f"{settings.HOST_URL}/user/verify/{uidb64}/{token}"
         subject = '[Wow Rentals] Verify Your Email'
-        message = f'Click the following link to verify your email: {verification_link}'
-        message2 = f"""
+        message = f"""
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -61,32 +57,33 @@ class SignUpView(APIView):
             <div style="text-align: center; padding: 20px;">
                 <h2>Email Verification</h2>
                 <p>Thank you for signing up! Click the button below to verify your email:</p>
-                <a href="{verification_link}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 5px;">Verify Email</a>
+                <a href="{verification_link}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 5px;">
+                    Verify Email
+                </a>
             </div>
         </body>
         </html>
         """
-        print(message2)
-        headers = {'X-Mailer': 'NO-PREFETCH', 'Precedence': 'bulk'}
-        e = EmailMessage(subject, message, settings.EMAIL_HOST_USER, [user.email], headers=headers)
-        return e.send()
+        return send_mail(subject, 'Click to verify link', settings.EMAIL_HOST_USER, [user.email], html_message=message)
 
 
 class VerifyEmailView(APIView):
 
     permission_classes = [AllowAny] # noqa
 
-    def get(self, request, uidb64, token):
+    def post(self, request, uidb64, token):
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            user = None
+            return Response({'message': 'Email not found!'}, status=status.HTTP_404_NOT_FOUND)
 
         if user is not None and default_token_generator.check_token(user, token):
             user.is_active = True
+            if "password" in request.data:
+                user.set_password(request.data["password"])
             user.save()
-        return redirect('/')
+        return Response({'message': 'Email verified!'}, status=status.HTTP_200_OK)
 
 
 class ForgotPasswordView(APIView):
@@ -94,18 +91,37 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny] # noqa
 
     def post(self, request):
-        user = User.objects.get(email=request.data['email'])
-        self.send_reset_email(request, user)
-        return Response({'message': 'Password reset email sent successfully!'}, status=status.HTTP_200_OK)
+        user = User.objects.filter(email=request.data['email']).first()
+        if user:
+            self.send_reset_email(request, user)
+            return Response({'message': 'Password reset email sent successfully!'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Email does not exist!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def send_reset_email(self, request, user):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = PasswordResetTokenGenerator().make_token(user)
-        base_url = f"{request.scheme}://{get_current_site(request)}"
-        reset_link = f"{base_url}/user/reset-password/{uidb64}/{token}/"
+        reset_link = f"{settings.HOST_URL}/user/new-password/{uidb64}/{token}/"
         subject = '[Wow Rentals] Password Reset'
-        message = f'Click the following link to reset your password: {reset_link}'
-        send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
+        message = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+        </head>
+        <body>
+            <div style="text-align: center; padding: 20px;">
+                <h2>Email Verification</h2>
+                <p>Click link to reset your password:</p>
+                <a href="{reset_link}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 5px;">
+                    Verify Email
+                </a>
+            </div>
+        </body>
+        </html>
+        """
+        return send_mail(subject, 'Click to verify link', settings.EMAIL_HOST_USER, [user.email], html_message=message)
 
 
 class ProfileView(viewsets.ViewSet):

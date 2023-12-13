@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import OfficeLocation, PaymentStatus, Vehicle
+from .models import OfficeLocation, PaymentStatus, Vehicle, VehicleClass
 from .serializer import OfficeLocationSerializer, VehicleSerializer
 
 
@@ -47,13 +47,34 @@ class VehicleAPI(APIView):
         if request.data.get('model'):
             query &= Q(model__in=request.data.get('model'))
         if request.data.get('class_id'):
-            query &= Q(class_id__in=request.data.get('class_id'))
+            query &= Q(
+                class_id__in=VehicleClass.objects.filter(
+                    pk__in=request.data.get('class_id')
+                )
+            )
+        count = Vehicle.objects.filter(query).order_by('vehicle_id').count()
+        data = []
+        previous_page_exists = False
+        previous_page__gt = 0
+
         if request.data.get('vehicle_id__gt'):
+            previous = query & Q(vehicle_id__lte=request.data.get('vehicle_id__gt'))
             query &= Q(vehicle_id__gt=request.data.get('vehicle_id__gt'))
-        data = VehicleSerializer(Vehicle.objects.filter(query).order_by('vehicle_id')[:1000], many=True).data
+            data = VehicleSerializer(
+                Vehicle.objects.filter(query).order_by('vehicle_id')[:10], many=True
+            ).data
+            previous_page = Vehicle.objects.filter(previous).order_by('-vehicle_id')[:11]
+            previous_page_exists = previous_page.count()
+            previous_page__gt = previous_page[len(previous_page) - 1].pk
+        else:
+            data = VehicleSerializer(
+                Vehicle.objects.filter(query).order_by('vehicle_id')[:10], many=True
+            ).data
         return Response({
             "data": data,
-            "has_next": False if len(data) < 1000 else True,
+            "count": count,
+            "previous_page": previous_page_exists,
+            "previous_page__gt": previous_page__gt,
         }, status=status.HTTP_200_OK)
 
 

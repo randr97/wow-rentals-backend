@@ -3,11 +3,10 @@ from datetime import datetime
 from decimal import Decimal
 
 import pytz  # noqa
-from django.conf import settings
+# from django.conf import settings
 from django.db.models import Q
-from django.utils import timezone
+# from django.utils import timezone
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,7 +19,8 @@ from vehicle.serializer import BookingsSerializer
 
 from .models import (Corporation, Coupon, CouponCorporate, CouponIndividual,
                      CustomerCorporate, CustomerIndividual, Payment)
-from .serializer import (CouponSerializer, CustomerCorporateSerializer,
+from .serializer import (CorporationSerializer, CouponSerializer,
+                         CustomerCorporateSerializer,
                          CustomerIndividualSerializer, PaymentSerializer)
 
 
@@ -42,6 +42,10 @@ class HomeView(viewsets.ViewSet):
             "payment": PaymentSerializer(
                 Payment.objects.filter(customer_id=request.user.pk, is_valid=True), many=True
             ).data,
+            "corporation": CorporationSerializer(
+                Corporation.objects.filter(domain=request.user.email.split('@')[1]),
+                many=True
+            ).data,
         }
         return Response(data=resp, status=status.HTTP_200_OK)
 
@@ -52,8 +56,7 @@ class HomeView(viewsets.ViewSet):
         }[request.user.user_type]
         request.data['customer_id'] = request.user.pk
         if request.user.user_type == UserType.CORPORATE:
-            request.data['corp_id'] = Corporation.objects.filter(
-                domain=request.user.email.split('@')[1]).first().pk
+            request.data['corp_id'] = Corporation.objects.filter(domain=request.user.email.split('@')[1]).first().pk
         if CustomerModel.objects.filter(customer_id=request.user).exists():
             sez = CustomerSerializer(instance=CustomerModel.objects.get(customer_id=request.user), data=request.data)
             if sez.is_valid(raise_exception=True):
@@ -124,13 +127,19 @@ def coupon_is_valid(request):
         is_valid = (
             request.user.user_type == UserType.INDIVIDUAL and
             CouponIndividual.objects.filter(
-                coupon_id=Coupon.objects.filter(coupon_code=request.data["coupon_code"]).first(),
+                coupon_id=Coupon.objects.filter(
+                    coupon_code=request.data["coupon_code"],
+                    is_valid=True,
+                ).first(),
                 valid_to__gte=datetime.now().date()
             ).count()
         ) or (
             request.user.user_type == UserType.CORPORATE and
             CouponCorporate.objects.filter(
-                coupon_id=Coupon.objects.filter(coupon_code=request.data["coupon_code"]).first(),
+                coupon_id=Coupon.objects.filter(
+                    coupon_code=request.data["coupon_code"],
+                    is_valid=True,
+                ).first(),
                 corp_id=request.user.corporate_customer.corp_id
             ).count()
         )
@@ -140,15 +149,17 @@ def coupon_is_valid(request):
     return is_valid
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def validate_coupon(request):
-    return Response({'is_valid': coupon_is_valid(request)}, status=status.HTTP_201_CREATED)
-
-
 class BookView(viewsets.ViewSet):
 
     permission_classes = [IsAuthenticated]
+
+    def validate_coupon(self, request):
+        if coupon_is_valid(request):
+            return Response(
+                CouponSerializer(Coupon.objects.get(coupon_code=request.data["coupon_code"])).data,
+                status=status.HTTP_201_CREATED
+            )
+        return Response({'message': 'Invalid Coupon!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def pending_booking(self, request):
         try:
@@ -166,16 +177,18 @@ class BookView(viewsets.ViewSet):
             return Response({'message': 'Bad Request!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def complete_booking(self, request):
-        booking = Booking.objects.get(
+        booking = Booking.objects.filter(
             pk=request.data["booking_id"],
             customer_id=request.user,
             trip_status=TripStatus.PENDING,
             payment_status=PaymentStatus.PENDING,
-        )
-        if (timezone.now() - booking.created_at).total_seconds() >= settings.PAYMENT_SESSION_TIME:
+        ).first()
+        if not booking:
             return Response({'message': 'Booking session cancelled'}, status=status.HTTP_403_FORBIDDEN)
-        if "coupon_code" in request.data and coupon_is_valid(request):
-            booking.coupon_id = Coupon.objects.get(coupon_code=request.data["coupon_code"]).pk
+        if "coupon_code" in request.data and request.data.get('coupon_code'):
+            if not coupon_is_valid(request):
+                return Response({'message': 'Invalid Coupon! Cannot confirm booking.'}, status=status.HTTP_400_BAD_REQUEST)
+            booking.coupon_id = Coupon.objects.get(coupon_code=request.data["coupon_code"])
         if Payment.objects.filter(customer_id=request.user, pk__in=request.data["payment_id"]).exists():
             booking.payment_status = PaymentStatus.COMPLETE
             booking.payment.set(
@@ -236,7 +249,8 @@ class BookView(viewsets.ViewSet):
     def list_bookings(self, request):
         sez = BookingsSerializer(
             Booking.objects.filter(
-                customer_id=request.user, payment_status=PaymentStatus.COMPLETE).order_by('pickup_date'),
+                customer_id=request.user, payment_status=PaymentStatus.COMPLETE
+            ).order_by('pickup_date'),
             many=True,
         )
         return Response(sez.data, status=status.HTTP_200_OK)
