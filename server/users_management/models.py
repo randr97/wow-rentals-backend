@@ -68,6 +68,3 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name='ch_inh_dsr_customer'
             )
         ]
-
-    def __str__(self):
-        return self.email

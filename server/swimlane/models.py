@@ -91,9 +91,6 @@ class Coupon(models.Model):
             )
         ]
 
-    def __str__(self):
-        return f"[{self.coupon_id}] {CouponChoice(self.coupon_type).name.lower()} coupon with discount {self.discount}"
-
 
 class CouponIndividual(models.Model):
     coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE, related_name='individual_coupon')
@@ -105,13 +102,7 @@ class CouponIndividual(models.Model):
             models.CheckConstraint(check=models.Q(valid_to__gte=models.F('valid_from')), name='dsr_coupon_indiv_chk_date'),
         ]
 
-    def __str__(self):
-        return f"[{self.coupon_id}] {self.valid_from} {self.valid_to}"
-
 
 class CouponCorporate(models.Model):
     coupon_id = models.OneToOneField(Coupon, primary_key=True, on_delete=models.CASCADE, related_name='corporate_coupon')
     corp_id = models.ForeignKey(Corporation, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"[{self.coupon_id}] {self.corp_id.name}"

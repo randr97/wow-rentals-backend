@@ -37,18 +37,12 @@ class OfficeLocation(models.Model):
             models.Index(fields=['address_street']),
         ]
 
-    def __str__(self):
-        return self.address_street
-
 
 class VehicleClass(models.Model):
     class_id = models.BigAutoField(primary_key=True)
     vehicle_class = models.CharField(max_length=100, null=False, blank=False)
     rent_charge = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     extra_charge = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
-
-    def __str__(self):
-        return self.vehicle_class
 
 
 class Vehicle(models.Model):
@@ -64,9 +58,6 @@ class Vehicle(models.Model):
     rating = models.IntegerField(default=4, null=False, blank=False)
     description = models.CharField(max_length=255, null=False, blank=False)
     url = models.CharField(max_length=255, null=False, blank=False)
-
-    def __str__(self):
-        return f"{self.make}-{self.model}"
 
 
 class Booking(models.Model):
@@ -118,9 +109,6 @@ class Booking(models.Model):
                 name='dsr_booking_chk_service_status'
             ),
         ]
-
-    def __str__(self):
-        return str(self.booking_id)
 
     def save(self, *args, **kwargs):
         self.next_available_date = self.dropoff_date + timedelta(days=1)
